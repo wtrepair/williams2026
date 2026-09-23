@@ -1,0 +1,45 @@
+# Williams Solutions.Pro — Vercel preview
+
+Preview: https://williams-solutions-preview.vercel.app/
+
+Independent React + Vite redesign, built alongside the existing Williams WordPress/Divi site. **Never deploy this project over `williams-wp`, modify its custom domains, or run the legacy static-promotion script.**
+
+## Run locally
+
+```sh
+npm ci
+npm run dev -- --port 5178
+npm run build
+```
+
+Uses React, React Router, Three.js, Lucide, and locally hosted DM Sans / Barlow Condensed fonts. The 3D scene is created from geometry; it does not download models or textures. Animation pauses out of view and honours reduced-motion preferences. Devices without WebGL receive an SVG fallback.
+
+## Browser verification
+
+With the dev server on port 5178 and Chrome installed:
+
+```sh
+npm run test:browser
+```
+
+Set `BASE_URL` to verify a deployment instead. Screenshots and temporary results belong in ignored `.cache/`.
+
+## Preview deployment
+
+Vercel team: `paul-peanuts-projects`. **New project:** `williams-solutions-preview`. Production site `williams-wp` remains separate.
+
+```sh
+npx vercel link --yes --scope paul-peanuts-projects --project williams-solutions-preview
+npx vercel deploy --yes --target preview --scope paul-peanuts-projects
+```
+
+This preview sends `X-Robots-Tag: noindex, nofollow` and blocks crawlers in `robots.txt`. No custom domain is assigned. Existing Williams Jobber request links, phone and email remain the contact destinations. Contact controls open the relevant email draft or existing secure request page; no new mail backend or live submissions were added.
+
+## Content
+
+- Seven services: plumbing, septic, water treatment, wells, excavation/aggregate, logging, and snow removal.
+- Five water-treatment detail pages and three homeowner guides.
+- Existing public service, water treatment and dated article URLs resolve in the new app.
+- Well-service capability statements are based on the owner's supplied brief. “Rug wells” was interpreted as “dug wells.” Snow removal copy invites a property assessment without inventing pricing, routes, response times, or contract terms.
+- Source content: `src/content.js`. Layout/routes: `src/main.jsx`. Styles: `src/styles.css`.
+- Original photos and logos were copied from the existing local Divi export; the source repository was read-only. See `docs/content-provenance.md`.
