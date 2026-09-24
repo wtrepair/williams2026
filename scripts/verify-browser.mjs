@@ -39,6 +39,43 @@ try {
         false,
         `${route} fits ${width}px`,
       );
+      assert.equal(
+        await page
+          .locator("h1, h2, h3")
+          .evaluateAll((nodes) => nodes.some((n) => !n.textContent.trim())),
+        false,
+        `${route} has no empty headings`,
+      );
+      if (width === 1440) {
+        const headline = page.locator(
+          ".hero-heading h1, .editorial-hero .detail-heading h1",
+        );
+        if (await headline.count()) {
+          const lines = await headline.evaluate((el) => {
+            const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+            const tops = [];
+            let node;
+            while ((node = walker.nextNode())) {
+              if (!node.textContent.trim()) continue;
+              const range = document.createRange();
+              range.selectNodeContents(node);
+              tops.push(...Array.from(range.getClientRects(), (r) => r.top));
+            }
+            return Math.max(...tops) - Math.min(...tops);
+          });
+          assert.ok(lines < 2, `${route} desktop hero title fits one line`);
+        }
+        const pairs = page.locator('[data-feature-count="4"]');
+        if (await pairs.count())
+          assert.equal(
+            await pairs.evaluate(
+              (el) =>
+                getComputedStyle(el).gridTemplateColumns.split(" ").length,
+            ),
+            2,
+            `${route} arranges four features in two columns`,
+          );
+      }
       assert.match(
         await page.locator('meta[name="robots"]').getAttribute("content"),
         /noindex/,
@@ -88,7 +125,14 @@ try {
       exact: true,
     })
     .click();
-  assert.equal(await page.locator("details[open]").count(), 1);
+  assert.equal(
+    await page
+      .locator("details")
+      .filter({ hasText: "Do you need a drilling rig to replace my pump?" })
+      .evaluate((el) => el.open),
+    true,
+    "Well FAQ opens",
+  );
   await page.goto(`${base}/contact?service=wells`, {
     waitUntil: "networkidle",
   });
@@ -119,6 +163,19 @@ try {
     { waitUntil: "networkidle" },
   );
   assert.match(page.url(), /\/insights\/understanding-septic/);
+  await page.goto(`${base}/septic`, { waitUntil: "networkidle" });
+  const memberLogo = page.locator(".association-logo img");
+  await memberLogo.scrollIntoViewIfNeeded();
+  await memberLogo.evaluate((im) => im.decode());
+  assert.equal(await memberLogo.getAttribute("src"), "/images/oowa-logo.png");
+  assert.match(
+    await page.locator(".association-copy").textContent(),
+    /Ryan Williams is a member/,
+  );
+  assert.equal(
+    await page.locator(".association-logo a").getAttribute("href"),
+    "https://www.oowa.org/",
+  );
   await page.goto(`${base}/not-a-real-page`, { waitUntil: "networkidle" });
   assert.match(await page.locator("h1").textContent(), /BACK ON TRACK/);
   await page.setViewportSize({ width: 1440, height: 1000 });
@@ -129,7 +186,7 @@ try {
   await page.screenshot({ path: ".cache/verified-desktop.png" });
   assert.deepEqual(errors, [], "No browser runtime errors");
   console.log(
-    `PASS: ${routes.length} routes at desktop and mobile; navigation, seasons, FAQs, contact links, legacy routing, noindex, images, overflow, and renderer.`,
+    `PASS: ${routes.length} routes at desktop and mobile; single-line desktop heroes, paired feature grids, FAQ interactions, OOWA logo, navigation, seasons, contact links, legacy routing, noindex, images, overflow, and renderer.`,
   );
 } finally {
   await browser.close();

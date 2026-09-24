@@ -309,7 +309,7 @@ export const services = [
       "Snow clearing enquiries for homes and businesses. Let us talk through your winter needs.",
     intro:
       "Winter changes how you use your property. Tell us about your driveway, parking area or access needs, and we will discuss snow removal options and availability for your location.",
-    image: "/images/winter.webp",
+    image: null,
     features: [
       {
         title: "Residential enquiries",

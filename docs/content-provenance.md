@@ -23,3 +23,18 @@ The existing website, deployment project, DNS and WordPress installation were no
 Workspace issue-sync note: `bd dolt pull` failed with `could not map primary key column issue_id` before implementation. No issue database/schema edits were made in this task.
 
 The final colour direction follows the original logo blue, sampled as `#3c8bca`. Navigation uses the original full logo lockup. Darker blue buttons preserve text contrast; the 3D excavator retains its natural equipment colour.
+
+OOWA membership recognition (2026-09-24): `public/images/oowa-logo.png` is an intact copy of the current header logo on the [Ontario Onsite Wastewater Association website](https://www.oowa.org/), downloaded from [the official PNG asset](https://www.oowa.org/wp-content/uploads/2024/03/Untitled-design-11.png). Dimensions: 900 × 526 pixels; 190,883 bytes; SHA-256: `9a9fb0350f85da589be1bbc8d20f63aa24d984998f6433648a1cda4e570d1a9a`. The Ontario green/blue logo was visually inspected. The intact PNG retains the official source’s static Canva/XMP creator-attribution metadata; it contains no executable tracking, EXIF location, membership identifier or private email content. No private email, tracking, renewal or payment URL was used. Membership recognition follows the owner's supplied evidence and authorization; it does not claim OOWA certification or endorsement. Public usage guidance: OOWA's [2019 newsletter](https://www.oowa.org/wp-content/uploads/2020/05/R_Vol20_Iss2.pdf) encourages members to display the logo to promote membership and offers high-quality artwork on request; its currently linked [Member Code of Conduct, section 3.1](https://www.oowa.org/wp-content/uploads/2020/05/Member-Code-of-Conduct_V.2017-06-19.pdf) requires proper authorization for logo/name use. No public technical brand guide was found in the reviewed pages.
+
+## September 24 layout revision: additional original assets
+
+- `plumbing-detail.webp`: `WilliamsWP/wp-content/uploads/2025/04/Gallery-Plumbing-5.png`. Resized WebP copy; original unchanged.
+- `treatment-installation.webp`: `WilliamsWP/wp-content/uploads/2025/04/Plumbing-Setup.jpg`. Resized WebP copy; original unchanged.
+- `septic-detail.webp`: `WilliamsWP/wp-content/uploads/2025/09/IMG_1728.jpg`. Resized WebP copy; original unchanged.
+- `excavator-detail.webp`: `WilliamsWP/wp-content/uploads/2025/09/IMG_0114.jpeg`. Resized WebP copy; original unchanged.
+- `logging-detail.webp`: `WilliamsWP/wp-content/uploads/2025/04/Logging-spacer-large.jpg`. Resized WebP copy; original unchanged.
+- `water-softener.webp`: `WilliamsWP/wp-content/uploads/2025/08/Softers_Softners-Hero-1.png`. Resized WebP copy; original unchanged.
+- `hybrid-filter.webp`: `WilliamsWP/wp-content/uploads/2025/09/Hybrid-Filter_Softners-Hero-copy.png`. Resized WebP copy; original unchanged.
+- `reverse-osmosis.webp`: `WilliamsWP/wp-content/uploads/2025/09/Osmosis_Osmosis-Hero.png`. Resized WebP copy; original unchanged.
+- `whole-home-uv.webp`: `WilliamsWP/wp-content/uploads/2025/09/UV_UV-Hero.png`. Resized WebP copy; original unchanged.
+- `tannin-filter.webp`: `WilliamsWP/wp-content/uploads/2025/09/Tannins_Tannins-Hero.png`. Resized WebP copy; original unchanged.

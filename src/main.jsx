@@ -24,7 +24,6 @@ import {
   Snowflake,
   CircleCheck,
   Plus,
-  Minus,
   MapPin,
   Sun,
   ShieldCheck,
@@ -38,7 +37,10 @@ import "@fontsource/barlow-condensed/latin-600.css";
 import "@fontsource/barlow-condensed/latin-700.css";
 import { contact, services, waterSystems, articles } from "./content";
 import WellCutaway from "./components/WellCutaway";
+import ServiceFAQ from "./components/ServiceFAQ";
+import { servicePresentation, waterVisuals } from "./presentation";
 import "./styles.css";
+import "./editorial.css";
 
 const Landscape = lazy(() => import("./components/Landscape"));
 const icons = {
@@ -306,20 +308,24 @@ function Home() {
   return (
     <>
       <section className={`hero hero-${season}`}>
+        <div className="hero-heading wrap">
+          <p className="eyebrow">
+            <span className="status-dot" /> NORTHERN ONTARIO. THROUGH & THROUGH.
+          </p>
+          <h1>
+            BUILT FOR LIFE <span>UP NORTH.</span>
+          </h1>
+        </div>
         <div className="hero-grid wrap">
           <div className="hero-copy">
-            <p className="eyebrow">
-              <span className="status-dot" /> NORTHERN ONTARIO. THROUGH &
-              THROUGH.
-            </p>
-            <h1>
-              BUILT FOR
-              <br /> LIFE <span>UP NORTH.</span>
-            </h1>
             <p className="hero-description">
-              Good water. Solid ground. Clear driveways.
+              Good water. Solid ground.
               <br />
-              One local team that knows what your property needs.
+              Clear driveways.
+            </p>
+            <p className="hero-support">
+              One local team that knows what your property needs, through every
+              season.
             </p>
             <div className="hero-actions">
               <Button to="/contact">Let’s get to work</Button>
@@ -382,11 +388,10 @@ function Home() {
       </section>
       <div className="service-ribbon">
         <div className="wrap">
-          {["WATER", "WELLS", "EARTH", "SNOW"].map((item, i) => (
+          {["WATER", "WELLS", "EARTH", "SNOW"].map((item) => (
             <span key={item}>
               <span className="ribbon-star">✳</span>
               {item}
-              <small>0{i + 1}</small>
             </span>
           ))}
         </div>
@@ -394,7 +399,7 @@ function Home() {
       <section className="section wrap" id="services">
         <Reveal className="section-heading">
           <div>
-            <p className="eyebrow">01 / WHAT WE DO</p>
+            <p className="eyebrow">WHAT WE DO</p>
             <h2>
               ONE TEAM.
               <br />A WORLD OF <em>SOLUTIONS.</em>
@@ -406,7 +411,7 @@ function Home() {
           </p>
         </Reveal>
         <div className="services-grid">
-          {services.map((s, i) => {
+          {services.map((s) => {
             const Icon = icons[s.slug];
             return (
               <Reveal key={s.slug}>
@@ -416,7 +421,6 @@ function Home() {
                 >
                   <div className="card-top">
                     <Icon size={29} strokeWidth={1.3} />
-                    <span>0{i + 1}</span>
                   </div>
                   <h3>{s.shortTitle}</h3>
                   <p>{s.summary}</p>
@@ -449,7 +453,7 @@ function Home() {
             <WellCutaway />
           </Reveal>
           <Reveal className="feature-copy">
-            <p className="eyebrow">02 / WELL SPECIALISTS</p>
+            <p className="eyebrow">WELL SPECIALISTS</p>
             <h2>
               GOOD WATER
               <br />
@@ -466,14 +470,14 @@ function Home() {
             </p>
             <div className="well-points">
               <div>
-                <span>01</span>
+                <span className="point-dot" aria-hidden="true" />
                 <p>
                   <strong>Old well. A cleaner finish.</strong>Modernize an old
                   concrete dug well with a neat 6-inch well casing.
                 </p>
               </div>
               <div>
-                <span>02</span>
+                <span className="point-dot" aria-hidden="true" />
                 <p>
                   <strong>Deep pumps. Difficult locations.</strong>Pump
                   replacement without bringing in a drilling rig, even when
@@ -481,7 +485,7 @@ function Home() {
                 </p>
               </div>
               <div>
-                <span>03</span>
+                <span className="point-dot" aria-hidden="true" />
                 <p>
                   <strong>Low yield? Let’s take a look.</strong>Practical help
                   understanding your well’s performance and your options.
@@ -495,7 +499,7 @@ function Home() {
       <section className="section field-section wrap">
         <Reveal className="section-heading">
           <div>
-            <p className="eyebrow">03 / ROOTED HERE</p>
+            <p className="eyebrow">ROOTED HERE</p>
             <h2>
               REAL WORK.
               <br />
@@ -541,7 +545,7 @@ function Home() {
         <div className="wrap winter-grid">
           <Reveal>
             <p className="eyebrow">
-              <Snowflake size={16} /> 04 / READY FOR WINTER
+              <Snowflake size={16} /> READY FOR WINTER
             </p>
             <h2>
               WINTER DOESN’T WAIT.
@@ -571,7 +575,7 @@ function Home() {
       <section className="section wrap">
         <Reveal className="section-heading compact">
           <div>
-            <p className="eyebrow">05 / A LITTLE LOCAL KNOW-HOW</p>
+            <p className="eyebrow">A LITTLE LOCAL KNOW-HOW</p>
             <h2>
               GOOD TO <em>KNOW.</em>
             </h2>
@@ -605,7 +609,9 @@ function ArticleCard({ article, index }) {
             <Arrow />
           </span>
         </div>
-        <p className="eyebrow">WILLIAMS FIELD NOTES / 0{index + 1}</p>
+        <p className="eyebrow">
+          {["SEPTIC CARE", "WATER QUALITY", "PLUMBING KNOW-HOW"][index % 3]}
+        </p>
         <h3>{article.title}</h3>
         <span className="text-link dark">
           Read the guide <Arrow />
@@ -636,20 +642,89 @@ function ContactBand() {
     </section>
   );
 }
-function FAQs({ items }) {
+function ServiceApproach({ service }) {
+  const p = servicePresentation[service.slug];
+  const paired = service.features.length === 4;
   return (
-    <div className="faq-list">
-      {items.map((f, i) => (
-        <details key={i}>
-          <summary>
-            {f.question}
-            <Plus className="plus" size={20} />
-            <Minus className="minus" size={20} />
-          </summary>
-          <p>{f.answer}</p>
-        </details>
-      ))}
-    </div>
+    <section
+      className={`section wrap service-approach ${paired ? "approach-paired" : "approach-wide"}`}
+    >
+      <Reveal className="approach-heading">
+        <div>
+          <p className="eyebrow">{service.shortTitle} / HOW WE HELP</p>
+          <h2>
+            {p.heading[0]}
+            <br />
+            <em>{p.heading[1]}</em>
+          </h2>
+        </div>
+        {!paired && <p>{p.lead}</p>}
+      </Reveal>
+      <div className="approach-body">
+        {paired && (
+          <Reveal className="approach-aside">
+            <p>{p.lead}</p>
+            <figure>
+              <img src={p.photo} alt={p.photoAlt} loading="lazy" />
+              <figcaption>{p.caption}</figcaption>
+            </figure>
+          </Reveal>
+        )}
+        <div
+          className={`features-grid features-count-${service.features.length}`}
+          data-feature-count={service.features.length}
+        >
+          {service.features.map((f) => (
+            <Reveal className="feature-item" key={f.title}>
+              <h3>{f.title}</h3>
+              <p>{f.body}</p>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+function AssociationMembership() {
+  return (
+    <section
+      className="association-section wrap"
+      aria-labelledby="oowa-heading"
+    >
+      <div className="association-logo">
+        <a
+          href="https://www.oowa.org/"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Visit the Ontario Onsite Wastewater Association"
+        >
+          <img
+            src="/images/oowa-logo.png"
+            alt="OOWA — Ontario Onsite Wastewater Association"
+            width="900"
+            height="526"
+            loading="lazy"
+          />
+        </a>
+      </div>
+      <div className="association-copy">
+        <p className="eyebrow">CONNECTED TO OUR INDUSTRY</p>
+        <h2 id="oowa-heading">OOWA MEMBER.</h2>
+        <p>
+          Ryan Williams is a member of the Ontario Onsite Wastewater
+          Association, a community supporting onsite wastewater professionals,
+          education and better practices across Ontario.
+        </p>
+      </div>
+      <a
+        className="text-link dark"
+        href="https://www.oowa.org/"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Meet the association <Arrow />
+      </a>
+    </section>
   );
 }
 function ServicePage() {
@@ -660,10 +735,10 @@ function ServicePage() {
   return (
     <>
       <section
-        className={`detail-hero ${s.slug === "snow-removal" ? "snow-detail" : ""}`}
+        className={`detail-hero editorial-hero ${s.slug === "snow-removal" ? "snow-detail" : ""}`}
       >
         <div className="wrap detail-grid">
-          <div>
+          <div className="detail-heading">
             <Link to="/#services" className="breadcrumb">
               OUR SERVICES <ArrowRight size={12} /> {s.shortTitle}
             </Link>
@@ -674,10 +749,20 @@ function ServicePage() {
               {s.title.replace(/\.$/, "")}
               <span>.</span>
             </h1>
+          </div>
+          <div className="detail-copy">
             <p>{s.intro}</p>
             <Button to={`/contact?service=${s.slug}`}>
               Let’s talk {s.shortTitle.toLowerCase()}
             </Button>
+            <div className="detail-local">
+              <MapPin size={16} />
+              <span>
+                Kirkland Lake to Temiskaming Shores.
+                <br />
+                Local knowledge. Practical solutions.
+              </span>
+            </div>
           </div>
           <div className="detail-image">
             {s.slug === "snow-removal" ? (
@@ -699,31 +784,8 @@ function ServicePage() {
           </div>
         </div>
       </section>
-      <section className="section wrap">
-        <Reveal className="section-heading">
-          <div>
-            <p className="eyebrow">THE WILLIAMS APPROACH</p>
-            <h2>
-              THE RIGHT PEOPLE.
-              <br />
-              <em>THE RIGHT SOLUTION.</em>
-            </h2>
-          </div>
-          <p>
-            {s.summary} Tell us what’s happening at your property and we’ll help
-            you find the next step.
-          </p>
-        </Reveal>
-        <div className="features-grid">
-          {s.features.map((f, i) => (
-            <Reveal className="feature-item" key={f.title}>
-              <span className="feature-number">0{i + 1}</span>
-              <h3>{f.title}</h3>
-              <p>{f.body}</p>
-            </Reveal>
-          ))}
-        </div>
-      </section>
+      <ServiceApproach service={s} />
+      {s.slug === "septic" && <AssociationMembership />}
       {s.slug === "water-treatment" && (
         <section className="water-systems section">
           <div className="wrap">
@@ -734,9 +796,9 @@ function ServicePage() {
               <em>THROUGHOUT YOUR HOME.</em>
             </h2>
             <div className="system-list">
-              {waterSystems.map((w, i) => (
+              {waterSystems.map((w) => (
                 <Link key={w.slug} to={`/water-treatment/${w.slug}`}>
-                  <span>0{i + 1}</span>
+                  <Droplets size={23} strokeWidth={1.3} />
                   <div>
                     <h3>{w.title}</h3>
                     <p>{w.summary}</p>
@@ -748,19 +810,7 @@ function ServicePage() {
           </div>
         </section>
       )}
-      {s.faqs?.length > 0 && (
-        <section className="section wrap faq-section">
-          <Reveal>
-            <p className="eyebrow">A FEW GOOD QUESTIONS</p>
-            <h2>
-              LET’S CLEAR
-              <br />
-              <em>THINGS UP.</em>
-            </h2>
-          </Reveal>
-          <FAQs items={s.faqs} />
-        </section>
-      )}
+      <ServiceFAQ service={s} />
       <RelatedServices exclude={s.slug} />
       <ContactBand />
     </>
@@ -789,11 +839,12 @@ function WaterPage() {
   const { slug } = useParams();
   const system = waterSystems.find((s) => s.slug === slug);
   if (!system) return <NotFound />;
+  const visual = waterVisuals[slug];
   return (
     <>
-      <section className="detail-hero water-detail">
+      <section className="detail-hero editorial-hero water-detail">
         <div className="wrap detail-grid">
-          <div>
+          <div className="detail-heading">
             <Link to="/water-treatment" className="breadcrumb">
               WATER TREATMENT <ArrowRight size={12} /> {system.title}
             </Link>
@@ -802,13 +853,15 @@ function WaterPage() {
               {system.title}
               <span>.</span>
             </h1>
+          </div>
+          <div className="detail-copy">
             <p>{system.summary}</p>
             <Button to="/contact?service=water-treatment">
               Ask about your water
             </Button>
           </div>
           <div className="detail-image">
-            <img src="/images/water.webp" alt="Ripples on clean water" />
+            <img src={visual.image} alt={visual.alt} />
           </div>
         </div>
       </section>
@@ -890,7 +943,6 @@ function About() {
         </div>
         <div className="features-grid">
           <div className="feature-item">
-            <span className="feature-number">01</span>
             <h3>Start by listening.</h3>
             <p>
               We take the time to understand your property, the problem, and
@@ -898,7 +950,6 @@ function About() {
             </p>
           </div>
           <div className="feature-item">
-            <span className="feature-number">02</span>
             <h3>Bring the right tools.</h3>
             <p>
               Specialist equipment and practical experience help us work through
@@ -906,7 +957,6 @@ function About() {
             </p>
           </div>
           <div className="feature-item">
-            <span className="feature-number">03</span>
             <h3>Care about the details.</h3>
             <p>
               From work you can see to systems underground, we take pride in
@@ -952,7 +1002,7 @@ function Article() {
         <p className="lead">{a.intro}</p>
         {a.sections.map((s, i) => (
           <section key={i}>
-            <h2>{s.shortTitle}</h2>
+            <h2>{s.title}</h2>
             <p>{s.body}</p>
           </section>
         ))}

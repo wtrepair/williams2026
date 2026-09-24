@@ -43,3 +43,5 @@ This preview sends `X-Robots-Tag: noindex, nofollow` and blocks crawlers in `rob
 - Well-service capability statements are based on the owner's supplied brief. “Rug wells” was interpreted as “dug wells.” Snow removal copy invites a property assessment without inventing pricing, routes, response times, or contract terms.
 - Source content: `src/content.js`. Layout/routes: `src/main.jsx`. Styles: `src/styles.css`.
 - Original photos and logos were copied from the existing local Divi export; the source repository was read-only. See `docs/content-provenance.md`.
+
+The service layouts pair four capabilities in two columns, with specific original project imagery and illustrated FAQ panels. OOWA membership recognition appears on the septic page, using the official association logo and a public association link. Layout direction and image mappings are in `src/presentation.js` and `src/editorial.css`.
