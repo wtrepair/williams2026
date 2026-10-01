@@ -725,7 +725,7 @@ function SnowPricing() {
             <em>CLEAR PRICING.</em>
           </h2>
           <p>
-            From a single clearing to a plan for the season, let’s find what
+            From a single clearing to a monthly plan, let’s find what
             works for your property.
           </p>
           <Button to="/contact?service=snow-removal">

@@ -132,9 +132,10 @@ try {
     ["Grader", "$219", "per hour"],
     ["Small driveway", "$40", "per clearing"],
     ["Double driveway", "$60", "per clearing"],
-    ["Sand & salt mixture", "$60", "extra on request"],
-    ["Seasonal small-driveway plan", "About $1,000", "per season"],
-  ], "Snow page shows all five agreed rates and their units");
+    ["Sanding", "$60", "per request · extra"],
+    ["Monthly small-driveway plan", "About $1,000", "per month"],
+    ["Snow hauling", "$80", "per triaxle load"],
+  ], "Snow page shows all six agreed rates and their units");
   await visit(page, "/water-treatment#annual-maintenance");
   await expect(page.locator(".maintenance-heading")).toContainText("Every April");
   assert.deepEqual(await page.locator(".maintenance-checks h3").allTextContents(), ["Test your water", "Inspect your system", "Refresh filters & UV", "Stock up for the year"], "April program has all four maintenance steps");

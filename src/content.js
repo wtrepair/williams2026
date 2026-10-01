@@ -13,12 +13,13 @@ export const snowRates = [
   { title: "Grader", price: "$219", unit: "per hour" },
   { title: "Small driveway", price: "$40", unit: "per clearing" },
   { title: "Double driveway", price: "$60", unit: "per clearing" },
-  { title: "Sand & salt mixture", price: "$60", unit: "extra on request" },
+  { title: "Sanding", price: "$60", unit: "per request · extra" },
   {
-    title: "Seasonal small-driveway plan",
+    title: "Monthly small-driveway plan",
     price: "About $1,000",
-    unit: "per season",
+    unit: "per month",
   },
+  { title: "Snow hauling", price: "$80", unit: "per triaxle load" },
 ];
 
 export const annualMaintenance = {
@@ -348,22 +349,22 @@ export const services = [
     shortTitle: "Snow removal",
     eyebrow: "Keep the way clear",
     summary:
-      "Driveway clearing, grader service and seasonal options to help you keep winter moving.",
+      "Driveway clearing, grader service and snow hauling to help you keep winter moving.",
     intro:
-      "Winter changes how you use your property. Choose individual driveway clearings or ask about a seasonal small-driveway plan. Tell us about your driveway, parking area or access needs, and we will discuss the right service and availability for your location.",
+      "Winter changes how you use your property. Choose individual driveway clearings or ask about a monthly small-driveway plan, with sanding available separately on request. We also haul snow away by the triaxle load. Tell us about your property and we’ll discuss the right service and availability for your location.",
     image: null,
     features: [
       {
         title: "Driveway clearing",
-        body: "Small and double-driveway clearing, with a seasonal plan available for small driveways.",
+        body: "Small and double-driveway clearing, with a monthly plan available for small driveways. Sanding is extra, on request.",
       },
       {
-        title: "Grader service",
-        body: "Hourly grader service for your winter access needs. Tell us about the property and the work involved.",
+        title: "Grader service & snow hauling",
+        body: "Hourly grader service for your winter access needs, plus snow hauling at $80 per triaxle load.",
       },
       {
-        title: "Sand & salt on request",
-        body: "A sand and salt mixture is available as an extra. Ask the team to include it in your service request.",
+        title: "Sanding on request",
+        body: "Sanding is $60 per request, charged separately from your snow clearing or monthly plan.",
       },
     ],
     faqs: [
@@ -380,7 +381,7 @@ export const services = [
       {
         question: "What does driveway clearing cost?",
         answer:
-          "A small driveway is $40 per clearing and a double driveway is $60 per clearing. A seasonal small-driveway plan is about $1,000. Contact us to discuss your property and service needs.",
+          "A small driveway is $40 per clearing and a double driveway is $60 per clearing. A monthly small-driveway plan is about $1,000 per month, with sanding extra at $60 per request. Snow hauling is $80 per triaxle load. Contact us to discuss your property and service needs.",
       },
       {
         question: "How do I request a quote?",

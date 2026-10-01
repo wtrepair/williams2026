@@ -26,7 +26,7 @@ export const seasonalPromotions = {
   snow: {
     eyebrow: "READY FOR WINTER",
     heading: ["WINTER DOESN’T WAIT.", "LET’S GET AHEAD OF IT."],
-    body: "Keep your property accessible when the snow arrives. Local snow clearing, seasonal plans, and sand and salt when you need it.",
+    body: "Keep your property accessible when the snow arrives. Local snow clearing, monthly plans, snow hauling, and sanding on request.",
     link: "/snow-removal",
     cta: "Snow removal & pricing",
   },
