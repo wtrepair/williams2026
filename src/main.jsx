@@ -27,7 +27,13 @@ import {
   MapPin,
   Sun,
   ShieldCheck,
-  MoveUpRight,
+  Mail,
+  ClipboardList,
+  Sprout,
+  Leaf,
+  Pause,
+  Play,
+  CalendarDays,
 } from "lucide-react";
 import "@fontsource/dm-sans/latin-400.css";
 import "@fontsource/dm-sans/latin-500.css";
@@ -35,7 +41,20 @@ import "@fontsource/dm-sans/latin-600.css";
 import "@fontsource/dm-sans/latin-700.css";
 import "@fontsource/barlow-condensed/latin-600.css";
 import "@fontsource/barlow-condensed/latin-700.css";
-import { contact, services, waterSystems, articles } from "./content";
+import {
+  contact,
+  services,
+  waterSystems,
+  articles,
+  snowRates,
+  annualMaintenance,
+} from "./content";
+import {
+  getCalendarSeason,
+  getSeasonalPromotion,
+  landscapeSeasons,
+  seasonalPromotions,
+} from "./seasonal";
 import WellCutaway from "./components/WellCutaway";
 import ServiceFAQ from "./components/ServiceFAQ";
 import { servicePresentation, waterVisuals } from "./presentation";
@@ -230,7 +249,7 @@ function Footer() {
           ))}
         </div>
         <div>
-          <span className="footer-label">GOOD PEOPLE. LOCAL KNOW-HOW.</span>
+          <span className="footer-label">OUR NECK OF THE WOODS.</span>
           <p>
             Serving our neighbours from
             <br />
@@ -304,10 +323,49 @@ function Scene({ season }) {
   );
 }
 function Home() {
-  const [season, setSeason] = useState("summer");
+  const [today, setToday] = useState(() => new Date());
+  const [season, setSeason] = useState(() => getCalendarSeason());
+  const [automatic, setAutomatic] = useState(
+    () => !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  );
+  const heroRef = useRef(null);
+  const promotion = getSeasonalPromotion(today);
+  useEffect(() => {
+    const clock = window.setInterval(() => setToday(new Date()), 60000);
+    return () => window.clearInterval(clock);
+  }, []);
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const stopMotion = () => {
+      if (media.matches) setAutomatic(false);
+    };
+    media.addEventListener("change", stopMotion);
+    return () => media.removeEventListener("change", stopMotion);
+  }, []);
+  useEffect(() => {
+    if (!automatic) return;
+    let visible = true;
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+    });
+    observer.observe(heroRef.current);
+    const timer = window.setInterval(() => {
+      if (!visible || document.hidden) return;
+      setSeason(
+        (current) =>
+          landscapeSeasons[
+            (landscapeSeasons.indexOf(current) + 1) % landscapeSeasons.length
+          ],
+      );
+    }, 8000);
+    return () => {
+      observer.disconnect();
+      window.clearInterval(timer);
+    };
+  }, [automatic]);
   return (
     <>
-      <section className={`hero hero-${season}`}>
+      <section ref={heroRef} className={`hero hero-${season}`}>
         <div className="hero-heading wrap">
           <p className="eyebrow">
             <span className="status-dot" /> NORTHERN ONTARIO. THROUGH & THROUGH.
@@ -363,18 +421,42 @@ function Home() {
               <span className="scene-coordinate">47.8° N &nbsp; 79.9° W</span>
               <span>OUR HOME. OUR ELEMENT.</span>
             </div>
-            <div className="season-switch" aria-label="Landscape season">
+            <div
+              className="season-switch"
+              role="group"
+              aria-label="Landscape season"
+            >
+              {landscapeSeasons.map((name) => {
+                const SeasonIcon = {
+                  spring: Sprout,
+                  summer: Sun,
+                  fall: Leaf,
+                  winter: Snowflake,
+                }[name];
+                return (
+                  <button
+                    key={name}
+                    aria-pressed={season === name}
+                    onClick={() => {
+                      setSeason(name);
+                      setAutomatic(false);
+                    }}
+                  >
+                    <SeasonIcon size={14} aria-hidden="true" />{" "}
+                    {name[0].toUpperCase() + name.slice(1)}
+                  </button>
+                );
+              })}
               <button
-                aria-pressed={season === "summer"}
-                onClick={() => setSeason("summer")}
+                className="season-play"
+                aria-label={
+                  automatic
+                    ? "Pause automatic seasons"
+                    : "Play automatic seasons"
+                }
+                onClick={() => setAutomatic(!automatic)}
               >
-                <Sun size={15} /> Green season
-              </button>
-              <button
-                aria-pressed={season === "winter"}
-                onClick={() => setSeason("winter")}
-              >
-                <Snowflake size={15} /> Snow season
+                {automatic ? <Pause size={14} /> : <Play size={14} />}
               </button>
             </div>
           </div>
@@ -447,55 +529,11 @@ function Home() {
           </Reveal>
         </div>
       </section>
-      <section className="well-feature">
-        <div className="wrap feature-grid">
-          <Reveal className="feature-image">
-            <WellCutaway />
-          </Reveal>
-          <Reveal className="feature-copy">
-            <p className="eyebrow">WELL SPECIALISTS</p>
-            <h2>
-              GOOD WATER
-              <br />
-              STARTS <em>DEEPER.</em>
-            </h2>
-            <p className="lead">
-              A well is more than plumbing. It takes specialist know-how,
-              certifications, and the right equipment.
-            </p>
-            <p>
-              We’re equipped and certified to construct, maintain, repair, and
-              test wells—including dug wells that many contractors don’t take
-              on.
-            </p>
-            <div className="well-points">
-              <div>
-                <span className="point-dot" aria-hidden="true" />
-                <p>
-                  <strong>Old well. A cleaner finish.</strong>Modernize an old
-                  concrete dug well with a neat 6-inch well casing.
-                </p>
-              </div>
-              <div>
-                <span className="point-dot" aria-hidden="true" />
-                <p>
-                  <strong>Deep pumps. Difficult locations.</strong>Pump
-                  replacement without bringing in a drilling rig, even when
-                  access is a challenge.
-                </p>
-              </div>
-              <div>
-                <span className="point-dot" aria-hidden="true" />
-                <p>
-                  <strong>Low yield? Let’s take a look.</strong>Practical help
-                  understanding your well’s performance and your options.
-                </p>
-              </div>
-            </div>
-            <Button to="/wells">Go deeper into well services</Button>
-          </Reveal>
-        </div>
-      </section>
+      {promotion === "wells" ? (
+        <WellFeature featured />
+      ) : (
+        <SeasonalFeature promotion={promotion} />
+      )}
       <section className="section field-section wrap">
         <Reveal className="section-heading">
           <div>
@@ -507,9 +545,10 @@ function Home() {
             </h2>
           </div>
           <p>
-            We live and work in the North, too. Our approach is simple:
-            understand the job, bring the right tools, and take pride in the
-            result.
+            Born and raised here. This is home, and these are our neighbours. We
+            know the land, the weather, and what it takes to get a job done in
+            the North. We bring that local know-how to every property we work
+            on.
           </p>
         </Reveal>
         <Reveal className="field-images">
@@ -541,37 +580,7 @@ function Home() {
           </div>
         </Reveal>
       </section>
-      <section className="winter-feature">
-        <div className="wrap winter-grid">
-          <Reveal>
-            <p className="eyebrow">
-              <Snowflake size={16} /> READY FOR WINTER
-            </p>
-            <h2>
-              WINTER DOESN’T WAIT.
-              <br />
-              <em>LET’S GET AHEAD OF IT.</em>
-            </h2>
-            <p>
-              Keep your property accessible when the snow arrives. Talk to our
-              local team about snow removal for your home or business.
-            </p>
-            <Button to="/snow-removal">Make a plan for snow</Button>
-          </Reveal>
-          <div className="winter-art" aria-hidden="true">
-            <Snowflake strokeWidth={0.55} />
-            <div className="winter-art-label">
-              <span>BUILT FOR</span>
-              <strong>
-                NORTHERN
-                <br />
-                WINTERS.
-              </strong>
-              <span>WILLIAMS SOLUTIONS.PRO</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      {promotion !== "wells" && <WellFeature />}
       <section className="section wrap">
         <Reveal className="section-heading compact">
           <div>
@@ -592,6 +601,202 @@ function Home() {
       </section>
       <ContactBand />
     </>
+  );
+}
+function WellFeature({ featured = false }) {
+  return (
+    <section
+      className="well-feature"
+      data-promotion={featured ? "wells" : undefined}
+    >
+      <div className="wrap feature-grid">
+        <Reveal className="feature-image">
+          <WellCutaway />
+        </Reveal>
+        <Reveal className="feature-copy">
+          <p className="eyebrow">WELL SPECIALISTS</p>
+          <h2>
+            GOOD WATER
+            <br />
+            STARTS <em>DEEPER.</em>
+          </h2>
+          <p className="lead">
+            A well is more than plumbing. It takes specialist know-how,
+            certifications, and the right equipment.
+          </p>
+          <p>
+            We’re equipped and certified to construct, maintain, repair, and
+            test wells—including dug wells that many contractors don’t take on.
+          </p>
+          <div className="well-points">
+            <div>
+              <span className="point-dot" aria-hidden="true" />
+              <p>
+                <strong>Old well. A cleaner finish.</strong>Modernize an old
+                concrete dug well with a neat 6-inch well casing.
+              </p>
+            </div>
+            <div>
+              <span className="point-dot" aria-hidden="true" />
+              <p>
+                <strong>Deep pumps. Difficult locations.</strong>Pump
+                replacement without bringing in a drilling rig, even when access
+                is a challenge.
+              </p>
+            </div>
+            <div>
+              <span className="point-dot" aria-hidden="true" />
+              <p>
+                <strong>Low yield? Let’s take a look.</strong>Practical help
+                understanding your well’s performance and your options.
+              </p>
+            </div>
+          </div>
+          <Button to="/wells">Go deeper into well services</Button>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+function SeasonalFeature({ promotion }) {
+  const content = seasonalPromotions[promotion];
+  const Icon = { snow: Snowflake, maintenance: Droplets, septic: Waves }[
+    promotion
+  ];
+  return (
+    <section
+      className={`winter-feature seasonal-feature seasonal-${promotion}`}
+      data-promotion={promotion}
+    >
+      <div className="wrap winter-grid">
+        <Reveal>
+          <p className="eyebrow">
+            <Icon size={16} /> {content.eyebrow}
+          </p>
+          <h2>
+            {content.heading[0]}
+            <br />
+            <em>{content.heading[1]}</em>
+          </h2>
+          <p>{content.body}</p>
+          <Button to={content.link}>{content.cta}</Button>
+          {promotion === "snow" && (
+            <p className="seasonal-price">
+              Small driveways <strong>$40</strong> per clearing
+            </p>
+          )}
+        </Reveal>
+        {content.image ? (
+          <Reveal className="seasonal-photo">
+            <img src={content.image} alt={content.alt} loading="lazy" />
+          </Reveal>
+        ) : (
+          <div className="winter-art" aria-hidden="true">
+            <Snowflake strokeWidth={0.55} />
+            <div className="winter-art-label">
+              <span>BUILT FOR</span>
+              <strong>
+                NORTHERN
+                <br />
+                WINTERS.
+              </strong>
+              <span>WILLIAMS SOLUTIONS.PRO</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+function SnowPricing() {
+  return (
+    <section
+      className="snow-pricing section"
+      aria-labelledby="snow-pricing-heading"
+    >
+      <div className="wrap pricing-grid">
+        <Reveal className="pricing-intro">
+          <p className="eyebrow">
+            <Snowflake size={17} /> SNOW REMOVAL / RATES
+          </p>
+          <h2 id="snow-pricing-heading">
+            CLEAR DRIVEWAY.
+            <br />
+            <em>CLEAR PRICING.</em>
+          </h2>
+          <p>
+            From a single clearing to a plan for the season, let’s find what
+            works for your property.
+          </p>
+          <Button to="/contact?service=snow-removal">
+            Arrange snow removal
+          </Button>
+        </Reveal>
+        <Reveal>
+          <dl className="rate-list">
+            {snowRates.map((rate) => (
+              <div key={rate.title}>
+                <dt>{rate.title}</dt>
+                <dd>
+                  <strong>{rate.price}</strong>
+                  <span>{rate.unit}</span>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+function AnnualMaintenance() {
+  const stepIcons = [Droplets, ShieldCheck, Wrench, ClipboardList];
+  return (
+    <section
+      className="annual-maintenance section"
+      id="annual-maintenance"
+      aria-labelledby="maintenance-heading"
+    >
+      <div className="wrap">
+        <Reveal className="maintenance-heading">
+          <div>
+            <p className="eyebrow">
+              <CalendarDays size={17} /> {annualMaintenance.eyebrow}
+            </p>
+            <h2 id="maintenance-heading">{annualMaintenance.title}</h2>
+          </div>
+          <p>{annualMaintenance.intro}</p>
+        </Reveal>
+        <div className="maintenance-body">
+          <Reveal className="maintenance-photo">
+            <img
+              src="/images/treatment-installation.webp"
+              alt="Williams-installed water treatment equipment"
+              loading="lazy"
+            />
+            <span>GOOD WATER. ALL YEAR.</span>
+          </Reveal>
+          <div className="maintenance-checks">
+            {annualMaintenance.steps.map((step, i) => {
+              const Icon = stepIcons[i];
+              return (
+                <Reveal key={step.title}>
+                  <Icon size={27} strokeWidth={1.4} />
+                  <h3>{step.title}</h3>
+                  <p>{step.body}</p>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+        <div className="maintenance-action">
+          <Button to="/contact?service=water-treatment">
+            Ask about April maintenance
+          </Button>
+          <p>One annual visit. Care for the whole system.</p>
+        </div>
+      </div>
+    </section>
   );
 }
 function ArticleCard({ article, index }) {
@@ -784,7 +989,9 @@ function ServicePage() {
           </div>
         </div>
       </section>
+      {s.slug === "snow-removal" && <SnowPricing />}
       <ServiceApproach service={s} />
+      {s.slug === "water-treatment" && <AnnualMaintenance />}
       {s.slug === "septic" && <AssociationMembership />}
       {s.slug === "water-treatment" && (
         <section className="water-systems section">
@@ -1016,94 +1223,49 @@ function Article() {
   );
 }
 function Contact() {
-  const location = useLocation();
-  const initialService =
-    new URLSearchParams(location.search).get("service") || "";
-  const [selected, setSelected] = useState(initialService);
-  const selectedName =
-    services.find((s) => s.slug === selected)?.shortTitle || "a project";
-  const emailHref = `mailto:${contact.email}?subject=${encodeURIComponent(`Website enquiry: ${selectedName}`)}`;
   return (
-    <section className="contact-page wrap">
-      <div>
+    <section className="contact-page contact-simple wrap">
+      <div className="contact-intro">
         <p className="eyebrow">GOOD WORK STARTS HERE.</p>
         <h1>
-          WHAT CAN WE
+          LET’S GET
           <br />
-          <span>HELP YOU WITH?</span>
+          <span>TO WORK.</span>
         </h1>
         <p className="lead">
-          Tell us a little about your property and what you need. We’ll take it
-          from there.
+          Call, email, or send a request. We’ll take it from there.
         </p>
-        <div className="contact-details">
-          <a href={contact.tel}>
-            <Phone size={22} />
-            <span>
-              <small>GIVE US A CALL</small>
-              {contact.phone}
-            </span>
-            <Arrow />
-          </a>
-          <a href={`mailto:${contact.email}`}>
-            <MoveUpRight size={22} />
-            <span>
-              <small>SEND US A NOTE</small>
-              {contact.email}
-            </span>
-            <Arrow />
-          </a>
-          <div>
-            <MapPin size={22} />
-            <span>
-              <small>OUR NECK OF THE WOODS</small>Kirkland Lake to Temiskaming
-              Shores
-            </span>
-          </div>
-        </div>
       </div>
-      <div className="request-panel">
-        <p className="eyebrow">LET’S GET TO WORK.</p>
-        <h2>
-          YOUR PROJECT.
-          <br />
-          <em>OUR NEXT CONVERSATION.</em>
-        </h2>
-        <label htmlFor="service-select">What do you need a hand with?</label>
-        <select
-          id="service-select"
-          value={selected}
-          onChange={(e) => setSelected(e.target.value)}
-        >
-          <option value="">Select a service</option>
-          {services.map((s) => (
-            <option key={s.slug} value={s.slug}>
-              {s.shortTitle}
-            </option>
-          ))}
-          <option value="something-else">Something else / I’m not sure</option>
-        </select>
-        <Button href={emailHref}>
-          Email our team{selected ? ` about ${selectedName.toLowerCase()}` : ""}
-        </Button>
-        <p className="request-note">
-          Opens your email app. Include your location and a few details about
-          the job.
-        </p>
-        <div className="request-divider">
-          <span>OR</span>
-        </div>
+      <div className="contact-options">
+        <a href={contact.tel}>
+          <Phone size={25} />
+          <span>
+            <small>PHONE</small>
+            <strong>{contact.phone}</strong>
+          </span>
+          <Arrow />
+        </a>
+        <a href={`mailto:${contact.email}`}>
+          <Mail size={25} />
+          <span>
+            <small>EMAIL</small>
+            <strong>{contact.email}</strong>
+          </span>
+          <Arrow />
+        </a>
         <a
-          className="request-jobber"
+          className="contact-request"
           href={contact.requestUrl}
           target="_blank"
           rel="noreferrer"
         >
-          Use our online request form <Arrow />
+          <ClipboardList size={25} />
+          <span>
+            <small>REQUEST FORM</small>
+            <strong>Tell us what you need</strong>
+          </span>
+          <Arrow />
         </a>
-        <p className="request-note">
-          Continue to Williams’ secure booking page to send your request online.
-        </p>
       </div>
     </section>
   );

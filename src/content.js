@@ -1,12 +1,49 @@
 // Adapted from the existing Williams Solutions.Pro website and the owner's
-// supplied well-service notes. New snow-removal copy invites an assessment;
-// route availability and service arrangements are confirmed by the team.
+// supplied service notes, snow rates and annual maintenance program.
+// Route availability and service arrangements are confirmed by the team.
 export const contact = {
-  phone: "705-492-8910",
-  tel: "tel:+17054928910",
+  phone: "705-544-0200",
+  tel: "tel:+17055440200",
   email: "info@williamssolutions.pro",
   requestUrl:
     "https://clienthub.getjobber.com/client_hubs/c6ab68fa-74c2-4d46-9066-ff2210b88264/public/work_request/new?source=social_media",
+};
+
+export const snowRates = [
+  { title: "Grader", price: "$219", unit: "per hour" },
+  { title: "Small driveway", price: "$40", unit: "per clearing" },
+  { title: "Double driveway", price: "$60", unit: "per clearing" },
+  { title: "Sand & salt mixture", price: "$60", unit: "extra on request" },
+  {
+    title: "Seasonal small-driveway plan",
+    price: "About $1,000",
+    unit: "per season",
+  },
+];
+
+export const annualMaintenance = {
+  eyebrow: "Every April",
+  title: "Annual water treatment maintenance",
+  intro:
+    "Each April, we give your water system a thorough check and take care of its yearly upkeep, with the supplies it needs for the year ahead.",
+  steps: [
+    {
+      title: "Test your water",
+      body: "We start with a water test to understand your water quality and how your treatment system is performing.",
+    },
+    {
+      title: "Inspect your system",
+      body: "We inspect the treatment equipment and pressure tank, and test the performance of your well pump.",
+    },
+    {
+      title: "Refresh filters & UV",
+      body: "We change your system’s filters, UV lamps and sleeves as part of its annual maintenance.",
+    },
+    {
+      title: "Stock up for the year",
+      body: "We deliver the treatment product and salt your system requires for the year ahead.",
+    },
+  ],
 };
 
 export const services = [
@@ -109,7 +146,7 @@ export const services = [
     shortTitle: "Water treatment",
     eyebrow: "Start with what is in your water",
     summary:
-      "Water testing, softening, filtration and UV systems selected for your source and your home.",
+      "Water testing, softening, filtration and UV systems, with annual maintenance every April.",
     intro:
       "Hardness, staining, odours and water quality concerns need different solutions. We start by understanding your water, your flow and how you use it, then build a treatment system that addresses the actual problem.",
     image: "/images/water.webp",
@@ -127,8 +164,8 @@ export const services = [
         body: "Reverse osmosis can provide a dedicated supply for drinking and cooking, with a kitchen faucet and optional fridge connection.",
       },
       {
-        title: "UV & ongoing care",
-        body: "We size UV equipment, plan any required pretreatment and support your system with filters, lamp replacement and servicing.",
+        title: "Annual care, every April",
+        body: "Our April maintenance program brings your system’s yearly checks, servicing and supply delivery together.",
       },
     ],
     faqs: [
@@ -146,6 +183,11 @@ export const services = [
         question: "Does UV remove hardness or improve taste?",
         answer:
           "UV is used for disinfection. It does not soften water or remove dissolved chemicals, so other treatment may be needed alongside it.",
+      },
+      {
+        question: "Do you offer annual water treatment maintenance?",
+        answer:
+          "Yes. Our annual program runs each April. Contact us to discuss your system and arrange its yearly care.",
       },
     ],
   },
@@ -306,22 +348,22 @@ export const services = [
     shortTitle: "Snow removal",
     eyebrow: "Keep the way clear",
     summary:
-      "Snow clearing enquiries for homes and businesses. Let us talk through your winter needs.",
+      "Driveway clearing, grader service and seasonal options to help you keep winter moving.",
     intro:
-      "Winter changes how you use your property. Tell us about your driveway, parking area or access needs, and we will discuss snow removal options and availability for your location.",
+      "Winter changes how you use your property. Choose individual driveway clearings or ask about a seasonal small-driveway plan. Tell us about your driveway, parking area or access needs, and we will discuss the right service and availability for your location.",
     image: null,
     features: [
       {
-        title: "Residential enquiries",
-        body: "Speak with us about snow clearing for your home and the access you need to keep open through winter.",
+        title: "Driveway clearing",
+        body: "Small and double-driveway clearing, with a seasonal plan available for small driveways.",
       },
       {
-        title: "Commercial enquiries",
-        body: "Discuss the parking and access needs of your business so we can understand the property and the work involved.",
+        title: "Grader service",
+        body: "Hourly grader service for your winter access needs. Tell us about the property and the work involved.",
       },
       {
-        title: "A plan for your property",
-        body: "We will review access, the areas to clear and where snow can be placed before confirming the arrangement.",
+        title: "Sand & salt on request",
+        body: "A sand and salt mixture is available as an extra. Ask the team to include it in your service request.",
       },
     ],
     faqs: [
@@ -334,6 +376,11 @@ export const services = [
         question: "Do you accept residential and commercial enquiries?",
         answer:
           "Yes. We welcome enquiries from homeowners and businesses. The team will confirm whether we can service your property.",
+      },
+      {
+        question: "What does driveway clearing cost?",
+        answer:
+          "A small driveway is $40 per clearing and a double driveway is $60 per clearing. A seasonal small-driveway plan is about $1,000. Contact us to discuss your property and service needs.",
       },
       {
         question: "How do I request a quote?",

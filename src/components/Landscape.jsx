@@ -3,6 +3,83 @@ import * as THREE from "three";
 
 const ORANGE = "#f36a27";
 const WILLIAMS_BLUE = "#3c8bca";
+const SEASONS = {
+  spring: {
+    grass: "#8fad72",
+    grassLight: "#afc788",
+    grassDark: "#718f60",
+    evergreen: "#305b43",
+    evergreenLight: "#528252",
+    gravel: "#bfb7a1",
+    roof: WILLIAMS_BLUE,
+    water: "#339eae",
+    sun: "#fff5dd",
+    foliage: "#94b65c",
+    foliageLight: "#c1cd7a",
+    foliageWarm: "#78a850",
+    snow: 0,
+    growth: 1,
+    crown: 0.86,
+    leafFall: 0,
+  },
+  summer: {
+    grass: "#7e936e",
+    grassLight: "#98aa83",
+    grassDark: "#627d61",
+    evergreen: "#254e42",
+    evergreenLight: "#3d6750",
+    gravel: "#c0b6a0",
+    roof: WILLIAMS_BLUE,
+    water: "#1e8eae",
+    sun: "#fff0cd",
+    foliage: "#658949",
+    foliageLight: "#8caa5b",
+    foliageWarm: "#4e783e",
+    snow: 0,
+    growth: 0.32,
+    crown: 1,
+    leafFall: 0,
+  },
+  fall: {
+    grass: "#969063",
+    grassLight: "#b4aa77",
+    grassDark: "#777958",
+    evergreen: "#365343",
+    evergreenLight: "#546b49",
+    gravel: "#c5b59a",
+    roof: WILLIAMS_BLUE,
+    water: "#387f94",
+    sun: "#ffe0b3",
+    foliage: "#c99539",
+    foliageLight: "#e3b54e",
+    foliageWarm: "#b96635",
+    snow: 0,
+    growth: 0,
+    crown: 0.96,
+    leafFall: 1,
+  },
+  winter: {
+    grass: "#e9eff0",
+    grassLight: "#f8fbfb",
+    grassDark: "#cedddd",
+    evergreen: "#658a83",
+    evergreenLight: "#87a6a0",
+    gravel: "#d4dfdc",
+    roof: "#e3e9e6",
+    water: "#81b8c8",
+    sun: "#e9f4ff",
+    foliage: "#c99539",
+    foliageLight: "#e3b54e",
+    foliageWarm: "#b96635",
+    snow: 1,
+    growth: 0,
+    crown: 0,
+    leafFall: 0,
+  },
+};
+
+const normalizeSeason = (season) =>
+  Object.hasOwn(SEASONS, season) ? season : "summer";
 
 // A small, locally generated piece of the North. No images or model downloads.
 export default function Landscape({ season = "summer", className = "" }) {
@@ -19,7 +96,6 @@ export default function Landscape({ season = "summer", className = "" }) {
     let frame = 0;
     let visible = true;
     let contextLost = false;
-    let winter = false;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-6.6, 6.6, 5.8, -5.8, 0.1, 70);
@@ -28,8 +104,11 @@ export default function Landscape({ season = "summer", className = "" }) {
     const island = new THREE.Group();
     scene.add(island);
     const materials = [];
-    const summerMaterials = [];
+    const seasonalColors = [];
     const snowyMeshes = [];
+    const deciduousCrowns = [];
+    const springPlants = [];
+    const autumnLeaves = [];
     const pointer = new THREE.Vector2();
     const currentPointer = new THREE.Vector2();
     const waterLines = [];
@@ -44,9 +123,9 @@ export default function Landscape({ season = "summer", className = "" }) {
       materials.push(value);
       return value;
     };
-    const seasonalMaterial = (summer, snow, options = {}) => {
-      const value = material(summer, options);
-      summerMaterials.push({ value, summer, snow });
+    const seasonalMaterial = (key, options = {}) => {
+      const value = material(SEASONS.summer[key], options);
+      seasonalColors.push({ color: value.color, key });
       return value;
     };
     const mesh = (geometry, mat, position = [0, 0, 0], parent = island) => {
@@ -123,12 +202,16 @@ export default function Landscape({ season = "summer", className = "" }) {
       return undefined;
     }
 
-    const grass = seasonalMaterial("#7e936e", "#e9eff0");
-    const grassLight = seasonalMaterial("#98aa83", "#f8fbfb");
-    const grassDark = seasonalMaterial("#627d61", "#cedddd");
-    const evergreen = seasonalMaterial("#254e42", "#658a83");
-    const evergreenLight = seasonalMaterial("#3d6750", "#87a6a0");
+    const grass = seasonalMaterial("grass");
+    const grassLight = seasonalMaterial("grassLight");
+    const grassDark = seasonalMaterial("grassDark");
+    const evergreen = seasonalMaterial("evergreen");
+    const evergreenLight = seasonalMaterial("evergreenLight");
     const snow = material("#f7faf7");
+    const snowCaps = material("#f7faf7", { transparent: true, opacity: 0 });
+    const foliage = seasonalMaterial("foliage");
+    const foliageLight = seasonalMaterial("foliageLight");
+    const foliageWarm = seasonalMaterial("foliageWarm");
     const bark = material("#635647");
     const rock = material("#99a099");
     const rockDark = material("#747d79");
@@ -136,7 +219,7 @@ export default function Landscape({ season = "summer", className = "" }) {
     const trim = material("#faf8ec");
     const orange = material(ORANGE);
     const brandBlue = material(WILLIAMS_BLUE);
-    const roofMat = seasonalMaterial(WILLIAMS_BLUE, "#e3e9e6", {
+    const roofMat = seasonalMaterial("roof", {
       metalness: 0.08,
     });
     const roofEdge = material("#295777");
@@ -152,8 +235,8 @@ export default function Landscape({ season = "summer", className = "" }) {
       emissiveIntensity: 0.25,
       metalness: 0.12,
     });
-    const gravel = seasonalMaterial("#c0b6a0", "#d4dfdc");
-    const waterMat = material("#1e8eae", {
+    const gravel = seasonalMaterial("gravel");
+    const waterMat = seasonalMaterial("water", {
       metalness: 0.3,
       roughness: 0.26,
       transparent: true,
@@ -167,6 +250,7 @@ export default function Landscape({ season = "summer", className = "" }) {
 
     scene.add(new THREE.HemisphereLight("#d9efff", "#655444", 2.4));
     const sun = new THREE.DirectionalLight("#fff0cd", 3.3);
+    seasonalColors.push({ color: sun.color, key: "sun" });
     sun.position.set(-5, 11, 7);
     sun.castShadow = true;
     sun.shadow.mapSize.set(1024, 1024);
@@ -397,7 +481,7 @@ export default function Landscape({ season = "summer", className = "" }) {
         );
         const cap = mesh(
           new THREE.ConeGeometry(radius * 0.91, height * 0.72, 7),
-          snow,
+          snowCaps,
           [0, y + height * 0.16, 0],
           tree,
         );
@@ -408,10 +492,115 @@ export default function Landscape({ season = "summer", className = "" }) {
     pine(-3.9, -1.6, 1.15, 0.4);
     pine(-3.2, -2.55, 0.91, 0.8);
     pine(-0.42, -2.57, 0.99, 0.1);
-    pine(0.44, -2.62, 0.74, 0.5);
     pine(4.02, 0.32, 0.72, 0.2);
-    pine(3.94, 1.2, 0.86, 0.8);
-    pine(-4.02, 1.44, 0.58, 0.2);
+
+    // Birch and maple crowns reveal the seasons while the northern pines stay green.
+    const birchBark = material("#d9d7c5");
+    const deciduous = (x, z, scale, birch = false) => {
+      const tree = new THREE.Group();
+      tree.position.set(x, 0.08, z);
+      tree.scale.setScalar(scale);
+      island.add(tree);
+      const trunk = birch ? birchBark : bark;
+      cylinder(0.045, 0.085, 1.63, trunk, [0, 0.815, 0], 7, tree);
+      beam([0, 0.9, 0], [-0.36, 1.59, 0.05], 0.028, trunk, tree);
+      beam([0, 1.11, 0], [0.36, 1.82, -0.1], 0.027, trunk, tree);
+      beam([0.13, 1.36, -0.04], [0.36, 1.5, 0.25], 0.017, trunk, tree);
+      beam([-0.23, 1.35, 0.03], [-0.44, 1.49, -0.17], 0.016, trunk, tree);
+      if (birch) {
+        for (let i = 0; i < 5; i += 1) {
+          box(
+            [0.061, 0.018, 0.015],
+            bark,
+            [0.008, 0.23 + i * 0.24, 0.065],
+            tree,
+          );
+        }
+      }
+      const crown = new THREE.Group();
+      crown.position.y = 1.6;
+      tree.add(crown);
+      [
+        [-0.29, -0.04, 0.08, 0.48],
+        [0.27, 0.09, -0.02, 0.49],
+        [-0.05, 0.39, -0.06, 0.49],
+        [0.08, -0.09, 0.3, 0.38],
+        [-0.16, 0.13, -0.29, 0.39],
+      ].forEach(([cx, cy, cz, radius], i) => {
+        const leaf = mesh(
+          new THREE.IcosahedronGeometry(radius, 0),
+          [foliage, foliageLight, foliageWarm][(i + (birch ? 0 : 1)) % 3],
+          [cx, cy, cz],
+          crown,
+        );
+        leaf.rotation.set(i * 0.4, i * 0.8, 0.15);
+      });
+      deciduousCrowns.push(crown);
+    };
+    deciduous(0.44, -2.62, 0.88, true);
+    deciduous(3.94, 1.2, 0.88);
+    deciduous(-4.02, 1.44, 0.61, true);
+
+    // Small patches of new growth emerge in spring, with fewer flowers in summer.
+    const flowerStem = material("#568c50");
+    const flowerCream = material("#f2e8b5");
+    const flowerLavender = material("#bab3d1");
+    const petalGeometry = new THREE.IcosahedronGeometry(0.036, 0);
+    for (let i = 0; i < 19; i += 1) {
+      const plant = new THREE.Group();
+      const patch = i < 10 ? [-0.62, 0.62] : [-3.6, 1.68];
+      plant.position.set(
+        patch[0] + ((i * 7) % 11) * 0.083,
+        0.095,
+        patch[1] + ((i * 5) % 9) * 0.092,
+      );
+      island.add(plant);
+      const height = 0.11 + (i % 3) * 0.026;
+      beam([0, 0, 0], [0, height, 0], 0.009, flowerStem, plant);
+      const flower = mesh(
+        petalGeometry,
+        i % 3 ? flowerCream : flowerLavender,
+        [0, height, 0],
+        plant,
+      );
+      flower.scale.set(1.3, 0.6, 1.3);
+      springPlants.push(plant);
+    }
+
+    // A few leaves drift from the deciduous trees and settle around their trunks.
+    const fallenLeaves = new THREE.Group();
+    island.add(fallenLeaves);
+    const leafGeometry = new THREE.IcosahedronGeometry(0.048, 0);
+    for (let i = 0; i < 33; i += 1) {
+      const origin = i % 2 ? [-4.02, 1.44] : [3.94, 1.2];
+      const angle = i * 2.399;
+      const radius = 0.16 + (i % 6) * 0.075;
+      const leaf = mesh(
+        leafGeometry,
+        i % 3 ? foliageLight : foliageWarm,
+        [
+          origin[0] + Math.cos(angle) * radius,
+          0.105,
+          origin[1] + Math.sin(angle) * radius,
+        ],
+        fallenLeaves,
+      );
+      leaf.scale.set(1.2, 0.13, 0.7);
+      leaf.rotation.y = angle;
+    }
+    const driftingLeaves = new THREE.Group();
+    island.add(driftingLeaves);
+    for (let i = 0; i < 12; i += 1) {
+      const origin = i % 2 ? [3.94, 1.2] : [0.44, -2.62];
+      const leaf = mesh(
+        leafGeometry,
+        i % 3 ? foliageLight : foliageWarm,
+        [origin[0], 0.3 + (i % 6) * 0.25, origin[1]],
+        driftingLeaves,
+      );
+      leaf.scale.set(1.2, 0.2, 0.7);
+      autumnLeaves.push({ leaf, origin, phase: i * 0.83 });
+    }
 
     // Fence and stacked firewood give the little property a lived-in scale.
     for (let i = 0; i < 5; i += 1) {
@@ -574,6 +763,52 @@ export default function Landscape({ season = "summer", className = "" }) {
     flakes.visible = false;
     island.add(flakes);
 
+    const seasonState = { snow: 0, growth: 0.32, crown: 1, leafFall: 0 };
+    let currentSeason = null;
+    let seasonTransition = null;
+    const applySeasonDetails = () => {
+      snowCaps.opacity = seasonState.snow;
+      snowyMeshes.forEach((object) => {
+        object.visible = seasonState.snow > 0.002;
+      });
+      snowMaterial.opacity = seasonState.snow * 0.8;
+      flakes.visible = seasonState.snow > 0.002;
+      deciduousCrowns.forEach((crown) => {
+        crown.visible = seasonState.crown > 0.002;
+        crown.scale.setScalar(Math.max(0.001, seasonState.crown));
+      });
+      springPlants.forEach((plant) => {
+        plant.visible = seasonState.growth > 0.002;
+        plant.scale.setScalar(Math.max(0.001, seasonState.growth));
+      });
+      fallenLeaves.visible = seasonState.leafFall > 0.002;
+      driftingLeaves.visible = seasonState.leafFall > 0.002;
+      fallenLeaves.children.forEach((leaf) => {
+        leaf.scale.set(1.2, 0.13, 0.7).multiplyScalar(seasonState.leafFall);
+      });
+      autumnLeaves.forEach(({ leaf }) => {
+        leaf.scale.set(1.2, 0.2, 0.7).multiplyScalar(seasonState.leafFall);
+      });
+    };
+    const updateSeasonTransition = (delta, finish = false) => {
+      if (!seasonTransition) return;
+      seasonTransition.elapsed += delta;
+      const progress = finish ? 1 : Math.min(1, seasonTransition.elapsed / 1.4);
+      const eased = progress * progress * (3 - 2 * progress);
+      seasonTransition.colors.forEach(({ color, from, to }) =>
+        color.lerpColors(from, to, eased),
+      );
+      Object.keys(seasonState).forEach((key) => {
+        seasonState[key] = THREE.MathUtils.lerp(
+          seasonTransition.from[key],
+          seasonTransition.to[key],
+          eased,
+        );
+      });
+      applySeasonDetails();
+      if (progress === 1) seasonTransition = null;
+    };
+
     const render = () => {
       if (disposed || contextLost) return;
       try {
@@ -593,6 +828,7 @@ export default function Landscape({ season = "summer", className = "" }) {
         : 0;
       previousTime = time;
       activeTime += delta;
+      updateSeasonTransition(delta);
       currentPointer.lerp(pointer, 0.045);
       island.rotation.y = currentPointer.x * 0.105;
       island.rotation.x = currentPointer.y * 0.026;
@@ -605,12 +841,22 @@ export default function Landscape({ season = "summer", className = "" }) {
       flowDots.forEach((dot, i) => {
         dot.position.y = -1.14 + ((activeTime * 0.2 + i * 0.245) % 1.25);
       });
-      if (winter) {
+      if (flakes.visible) {
         for (let i = 0; i < snowCount; i += 1) {
           snowPositions[i * 3 + 1] -= delta * (0.27 + (i % 4) * 0.07);
           if (snowPositions[i * 3 + 1] < 0.12) snowPositions[i * 3 + 1] = 5;
         }
         snowGeometry.attributes.position.needsUpdate = true;
+      }
+      if (driftingLeaves.visible) {
+        autumnLeaves.forEach(({ leaf, origin, phase }) => {
+          leaf.position.set(
+            origin[0] + Math.sin(activeTime * 0.7 + phase) * 0.27,
+            0.14 + (1.7 - ((activeTime * 0.23 + phase) % 1.7)),
+            origin[1] + Math.cos(activeTime * 0.6 + phase) * 0.2,
+          );
+          leaf.rotation.set(activeTime * 0.9 + phase, activeTime * 0.7, phase);
+        });
       }
       render();
       if (!reducedMotion.matches && !contextLost)
@@ -619,6 +865,7 @@ export default function Landscape({ season = "summer", className = "" }) {
     const schedule = () => {
       if (disposed || contextLost || !visible || document.hidden) return;
       if (reducedMotion.matches) {
+        updateSeasonTransition(0, true);
         island.rotation.set(0, 0, 0);
         island.position.y = 0;
         arm.rotation.z = 0;
@@ -643,16 +890,23 @@ export default function Landscape({ season = "summer", className = "" }) {
       schedule();
     };
     const setSeason = (next) => {
-      winter = next === "winter";
-      summerMaterials.forEach(({ value, summer, snow: snowyColor }) =>
-        value.color.set(winter ? snowyColor : summer),
-      );
-      snowyMeshes.forEach((object) => {
-        object.visible = winter;
-      });
-      flakes.visible = winter;
-      waterMat.color.set(winter ? "#81b8c8" : "#1e8eae");
-      sun.color.set(winter ? "#e9f4ff" : "#fff0cd");
+      const normalized = normalizeSeason(next);
+      if (normalized === currentSeason) return;
+      const palette = SEASONS[normalized];
+      const immediate = currentSeason === null || reducedMotion.matches;
+      currentSeason = normalized;
+      // Retarget from the visible state, even if a previous transition is unfinished.
+      seasonTransition = {
+        elapsed: 0,
+        colors: seasonalColors.map(({ color, key }) => ({
+          color,
+          from: color.clone(),
+          to: new THREE.Color(palette[key]),
+        })),
+        from: { ...seasonState },
+        to: palette,
+      };
+      updateSeasonTransition(0, immediate);
       render();
       schedule();
     };
@@ -759,6 +1013,7 @@ export default function Landscape({ season = "summer", className = "" }) {
     <div
       className={className}
       data-renderer={rendererStatus}
+      data-season={normalizeSeason(season)}
       aria-hidden="true"
       style={{
         position: "relative",
@@ -778,13 +1033,15 @@ export default function Landscape({ season = "summer", className = "" }) {
         }}
       />
       {rendererStatus !== "webgl" && (
-        <LandscapeFallback winter={season === "winter"} />
+        <LandscapeFallback season={normalizeSeason(season)} />
       )}
     </div>
   );
 }
 
-function LandscapeFallback({ winter }) {
+function LandscapeFallback({ season }) {
+  const winter = season === "winter";
+  const palette = SEASONS[season];
   return (
     <svg
       viewBox="0 0 650 540"
@@ -812,24 +1069,15 @@ function LandscapeFallback({ winter }) {
         d="M66 351 328 479 580 359 580 375 328 495 66 367Z"
         fill="#40595b"
       />
-      <path
-        d="m66 278 251-118 263 130-252 120Z"
-        fill={winter ? "#e4eded" : "#869b73"}
-      />
-      <path
-        d="m326 243 82-43 119 61-28 36-61 10-61-30Z"
-        fill={winter ? "#88b4c1" : "#298daa"}
-      />
+      <path d="m66 278 251-118 263 130-252 120Z" fill={palette.grass} />
+      <path d="m326 243 82-43 119 61-28 36-61 10-61-30Z" fill={palette.water} />
       <path
         d="m385 237 53 25m-16-34 50 26m-16 19 24 12"
         stroke="#b2e6e4"
         strokeWidth="3"
         opacity=".65"
       />
-      <path
-        d="m137 284 64-30 115 104-74 41Z"
-        fill={winter ? "#d0dbda" : "#c5bca5"}
-      />
+      <path d="m137 284 64-30 115 104-74 41Z" fill={palette.gravel} />
       <path d="m172 242 89 42 88-44v-87l-89-44-88 45Z" fill="#f0ece0" />
       <path d="m261 284 88-44v-87l-88 44Z" fill="#c8d3cd" />
       <path
@@ -850,16 +1098,64 @@ function LandscapeFallback({ winter }) {
         [376, 200, 0.83],
         [497, 341, 1.1],
         [526, 297, 0.82],
-      ].map(([x, y, scale]) => (
+      ].map(([x, y, scale], index) => (
         <g key={x} transform={`translate(${x} ${y}) scale(${scale})`}>
           <path d="M-4 2h8v-38h-8Z" fill="#625846" />
-          <path
-            d="M0-117-35-36H35Zm0 25-30 31h60Zm0 5-27 30h54Z"
-            fill={winter ? "#dce9e5" : "#365f4b"}
-          />
-          <path d="M0-131-24-70h48Z" fill={winter ? "#f2f7f4" : "#477457"} />
+          {index === 1 || index === 2 ? (
+            <>
+              <path
+                d="M0-21v-74m0 35-22-20m22 8 19-20"
+                stroke="#625846"
+                strokeWidth="4"
+                fill="none"
+              />
+              {!winter && (
+                <>
+                  <path
+                    d="m-31-103 20-24 31 2 24 26-5 35-24 16-32-7-24-25Z"
+                    fill={palette.foliage}
+                  />
+                  <path
+                    d="m-31-103 20-24 31 2 9 26-32 10Z"
+                    fill={palette.foliageLight}
+                  />
+                  <path
+                    d="m-3-89 32-10 15 0-5 35-24 16Z"
+                    fill={palette.foliageWarm}
+                  />
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              <path
+                d="M0-117-35-36H35Zm0 25-30 31h60Zm0 5-27 30h54Z"
+                fill={winter ? "#dce9e5" : palette.evergreen}
+              />
+              <path
+                d="M0-131-24-70h48Z"
+                fill={winter ? "#f2f7f4" : palette.evergreenLight}
+              />
+            </>
+          )}
         </g>
       ))}
+      {season === "spring" && (
+        <g fill="#f5e9b8">
+          <circle cx="288" cy="319" r="2.7" />
+          <circle cx="299" cy="313" r="2.2" />
+          <circle cx="282" cy="309" r="2.1" />
+          <circle cx="123" cy="257" r="2.2" />
+        </g>
+      )}
+      {season === "fall" && (
+        <g fill={palette.foliageWarm}>
+          <ellipse cx="490" cy="344" rx="5" ry="2" />
+          <ellipse cx="509" cy="336" rx="4" ry="2" />
+          <ellipse cx="478" cy="336" rx="3" ry="2" />
+          <ellipse cx="518" cy="344" rx="3" ry="2" />
+        </g>
+      )}
       <path
         d="M348 323v101l-55 26"
         stroke="#56bfd0"
