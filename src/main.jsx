@@ -57,6 +57,7 @@ import {
 } from "./seasonal";
 import WellCutaway from "./components/WellCutaway";
 import ServiceFAQ from "./components/ServiceFAQ";
+import RequestPage from "./components/RequestPage";
 import { servicePresentation, waterVisuals } from "./presentation";
 import "./styles.css";
 import "./editorial.css";
@@ -215,7 +216,7 @@ function Header() {
             </div>
             <Link to="/about">About Williams</Link>
             <Link to="/insights">Good to know</Link>
-            <Button to="/contact" className="nav-cta">
+            <Button to={contact.requestPath} className="nav-cta">
               Let’s get to work
             </Button>
           </nav>
@@ -260,8 +261,11 @@ function Footer() {
           <Link to="/about">
             Meet Williams <Arrow />
           </Link>
+          <Link to={contact.requestPath}>
+            Request service <Arrow />
+          </Link>
           <Link to="/contact">
-            Get in touch <Arrow />
+            Phone &amp; email <Arrow />
           </Link>
           <Link to="/insights">
             Homeowner resources <Arrow />
@@ -386,7 +390,7 @@ function Home() {
               season.
             </p>
             <div className="hero-actions">
-              <Button to="/contact">Let’s get to work</Button>
+              <Button to={contact.requestPath}>Let’s get to work</Button>
               <a className="text-link" href="#services">
                 Explore our services <ArrowDown size={16} />
               </a>
@@ -514,7 +518,10 @@ function Home() {
             );
           })}
           <Reveal>
-            <Link className="service-card service-card-help" to="/contact">
+            <Link
+              className="service-card service-card-help"
+              to={contact.requestPath}
+            >
               <span className="eyebrow">A PROJECT IN MIND?</span>
               <h3>
                 Let’s figure
@@ -725,12 +732,10 @@ function SnowPricing() {
             <em>CLEAR PRICING.</em>
           </h2>
           <p>
-            From a single clearing to a monthly plan, let’s find what
-            works for your property.
+            From a single clearing to a monthly plan, let’s find what works for
+            your property.
           </p>
-          <Button to="/contact?service=snow-removal">
-            Arrange snow removal
-          </Button>
+          <Button to={contact.requestPath}>Arrange snow removal</Button>
         </Reveal>
         <Reveal>
           <dl className="rate-list">
@@ -790,9 +795,7 @@ function AnnualMaintenance() {
           </div>
         </div>
         <div className="maintenance-action">
-          <Button to="/contact?service=water-treatment">
-            Ask about April maintenance
-          </Button>
+          <Button to={contact.requestPath}>Ask about April maintenance</Button>
           <p>One annual visit. Care for the whole system.</p>
         </div>
       </div>
@@ -836,7 +839,7 @@ function ContactBand() {
           </h2>
         </div>
         <div>
-          <Button to="/contact" light>
+          <Button to={contact.requestPath} light>
             Tell us what you need
           </Button>
           <a href={contact.tel}>
@@ -957,7 +960,7 @@ function ServicePage() {
           </div>
           <div className="detail-copy">
             <p>{s.intro}</p>
-            <Button to={`/contact?service=${s.slug}`}>
+            <Button to={contact.requestPath}>
               Let’s talk {s.shortTitle.toLowerCase()}
             </Button>
             <div className="detail-local">
@@ -1063,9 +1066,7 @@ function WaterPage() {
           </div>
           <div className="detail-copy">
             <p>{system.summary}</p>
-            <Button to="/contact?service=water-treatment">
-              Ask about your water
-            </Button>
+            <Button to={contact.requestPath}>Ask about your water</Button>
           </div>
           <div className="detail-image">
             <img src={visual.image} alt={visual.alt} />
@@ -1091,7 +1092,7 @@ function WaterPage() {
             </div>
           ))}
         </div>
-        <Button to="/contact?service=water-treatment">
+        <Button to={contact.requestPath}>
           Talk to our water treatment team
         </Button>
       </section>
@@ -1215,7 +1216,7 @@ function Article() {
         ))}
         <div className="article-end">
           <p>Have a question about your own property?</p>
-          <Button to="/contact">Talk to Williams</Button>
+          <Button to={contact.requestPath}>Talk to Williams</Button>
         </div>
       </article>
       <ContactBand />
@@ -1253,19 +1254,14 @@ function Contact() {
           </span>
           <Arrow />
         </a>
-        <a
-          className="contact-request"
-          href={contact.requestUrl}
-          target="_blank"
-          rel="noreferrer"
-        >
+        <Link className="contact-request" to={contact.requestPath}>
           <ClipboardList size={25} />
           <span>
             <small>REQUEST FORM</small>
             <strong>Tell us what you need</strong>
           </span>
           <Arrow />
-        </a>
+        </Link>
       </div>
     </section>
   );
@@ -1300,7 +1296,7 @@ function PageEffects() {
       about: "About Williams",
       contact: "Get in touch",
       insights: "Good to know",
-      "new-request": "Get in touch",
+      "new-request": "Request service",
     };
     document.title =
       location.pathname === "/"
@@ -1339,7 +1335,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/new-request" element={<Contact />} />
+          <Route path="/new-request" element={<RequestPage />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/insights/:slug" element={<Article />} />
           <Route path="/water-treatment/:slug" element={<WaterPage />} />

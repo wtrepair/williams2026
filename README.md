@@ -33,7 +33,7 @@ npx vercel link --yes --scope paul-peanuts-projects --project williams-solutions
 npx vercel deploy --yes --target preview --scope paul-peanuts-projects
 ```
 
-This preview sends `X-Robots-Tag: noindex, nofollow` and blocks crawlers in `robots.txt`. No custom domain is assigned. Contact offers three direct links: the owner's updated number, 705-544-0200; the existing email address; and the existing Jobber request form. No new mail backend or live submissions were added.
+This preview sends `X-Robots-Tag: noindex, nofollow` and blocks crawlers in `robots.txt`. No custom domain is assigned. Contact offers three direct links: the owner's updated number, 705-544-0200; the existing email address; and `/new-request/`. Every service/request CTA opens `/new-request/`, which embeds the same Jobber form as the existing site. The original standalone Jobber link remains available if embedding is blocked. No new mail backend or test submissions were added.
 
 ## Content
 
@@ -47,3 +47,9 @@ This preview sends `X-Robots-Tag: noindex, nofollow` and blocks crawlers in `rob
 - Original photos and logos were copied from the existing local Divi export; the source repository was read-only. See `docs/content-provenance.md`.
 
 The service layouts pair four capabilities in two columns, with specific original project imagery and illustrated FAQ panels. OOWA membership recognition appears on the septic page, using the official association logo and a public association link. Layout direction and image mappings are in `src/presentation.js` and `src/editorial.css`.
+
+## Request form
+
+`src/components/RequestPage.jsx` embeds Williams’ verified Jobber form `2248311` in hub `c6ab68fa-74c2-4d46-9066-ff2210b88264`. This is the iframe observed on the live `/new-request/` page on October 6, 2026. Form fields, uploads, consent and submission stay inside Jobber. Frame height messages are accepted only from that iframe and Jobber origin; the message listener is removed on unmount. `contact.requestPath`, `requestEmbedUrl`, and `requestUrl` centralize the website route, inline form, and direct fallback.
+
+Run `node scripts/verify-requests.mjs` for CTA routing, frame sizing, fallback and lifecycle checks. It mocks the external iframe and never submits a request; verify the real form separately in a normal browser because Jobber may challenge automated/headless sessions.

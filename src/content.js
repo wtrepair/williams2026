@@ -5,6 +5,9 @@ export const contact = {
   phone: "705-544-0200",
   tel: "tel:+17055440200",
   email: "info@williamssolutions.pro",
+  requestPath: "/new-request/",
+  requestEmbedUrl:
+    "https://clienthub.getjobber.com/hubs/c6ab68fa-74c2-4d46-9066-ff2210b88264/public/requests/2248311/embedded_new?source=embedded_inline",
   requestUrl:
     "https://clienthub.getjobber.com/client_hubs/c6ab68fa-74c2-4d46-9066-ff2210b88264/public/work_request/new?source=social_media",
 };

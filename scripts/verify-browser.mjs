@@ -122,7 +122,7 @@ try {
 
   await visit(page, "/contact?service=wells");
   await expect(page.locator(".contact-options > a")).toHaveCount(3);
-  assert.deepEqual(await page.locator(".contact-options > a").evaluateAll((links) => links.map((link) => link.getAttribute("href"))), ["tel:+17055440200", "mailto:info@williamssolutions.pro", contact.requestUrl], "Contact gives the new phone, direct email and existing Jobber request options");
+  assert.deepEqual(await page.locator(".contact-options > a").evaluateAll((links) => links.map((link) => link.getAttribute("href"))), ["tel:+17055440200", "mailto:info@williamssolutions.pro", "/new-request/"], "Contact gives the phone, direct email and internal request-page options");
   await expect(page.locator('.contact-options a[href="tel:+17055440200"]')).toContainText("705-544-0200");
   await expect(page.locator(".contact-options input, .contact-options select, #service-select")).toHaveCount(0);
 
@@ -230,7 +230,7 @@ try {
   await page.locator('[data-renderer="webgl"], [data-renderer="fallback"]').waitFor();
   await page.screenshot({ path: ".cache/verified-desktop.png" });
   assert.deepEqual(errors, [], "No browser runtime errors");
-  console.log(`PASS: ${routes.length} routes at ${widths.join("/")}px; desktop heroes, paired grids, FAQs, OOWA, navigation, five snow rates, April maintenance, simplified contact links, calendar promotions and Toronto boundaries, four-season autoplay/manual/reduced motion, legacy routes, noindex, images, overflow, and renderer.`);
+  console.log(`PASS: ${routes.length} routes at ${widths.join("/")}px; desktop heroes, paired grids, FAQs, OOWA, navigation, snow rates, April maintenance, simplified contact links, calendar promotions and Toronto boundaries, four-season autoplay/manual/reduced motion, legacy routes, noindex, images, overflow, and renderer.`);
 } finally {
   await browser.close();
 }
