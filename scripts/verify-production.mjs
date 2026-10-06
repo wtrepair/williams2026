@@ -123,7 +123,8 @@ try {
         const fallbacks = await page.locator('.request-page a[href*="getjobber.com"]').evaluateAll((links) => links.map((link) => link.getAttribute("href")));
         assert.ok(fallbacks.length >= 2 && fallbacks.every((href) => href === contact.requestUrl));
       }
-      if (["/", "/contact", "/new-request", "/wells"].includes(route)) await page.screenshot({ path: `.cache/production-${route.replaceAll("/", "") || "home"}-${width}.png` });
+      if (route === "/") await page.locator('.hero-scene [data-renderer="webgl"]').waitFor({ state: "visible" });
+      if (["/", "/contact", "/new-request", "/wells"].includes(route)) await page.screenshot({ path: `.cache/production-${route.replaceAll("/", "") || "home"}-${width}.png`, animations: "disabled" });
     });
   }
   await check("No page JavaScript exceptions", async () => assert.deepEqual(pageErrors, []));

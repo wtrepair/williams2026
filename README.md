@@ -6,6 +6,10 @@ Vercel project alias: https://williams-solutions-preview.vercel.app/
 
 Independent React + Vite website. The owner authorized launch on October 6, 2026. The original WordPress/Divi export remains in the separate `WilliamsWP` repository and `williams-wp` Vercel project for rollback. Do not overwrite that project or run its legacy static-promotion script. See `docs/production-launch.md` for domain and rollback details.
 
+Repository: https://github.com/wtrepair/williams2026
+
+Registered in the KissTech workspace under `vercell/williams2026`. Vercel is connected to this repository; pushes to `main` deploy production, while other branches produce previews. The original `vercell/WilliamsWP` repository remains separately registered.
+
 ## Run locally
 
 ```sh
