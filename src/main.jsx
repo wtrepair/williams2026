@@ -7,6 +7,7 @@ import {
   Route,
   Routes,
   useLocation,
+  useNavigate,
   useParams,
 } from "react-router-dom";
 import {
@@ -59,6 +60,7 @@ import WellCutaway from "./components/WellCutaway";
 import ServiceFAQ from "./components/ServiceFAQ";
 import RequestPage from "./components/RequestPage";
 import { servicePresentation, waterVisuals } from "./presentation";
+import { getPageMetadata } from "./site";
 import "./styles.css";
 import "./editorial.css";
 
@@ -541,7 +543,7 @@ function Home() {
       ) : (
         <SeasonalFeature promotion={promotion} />
       )}
-      <section className="section field-section wrap">
+      <section className="section field-section wrap" id="local-work">
         <Reveal className="section-heading">
           <div>
             <p className="eyebrow">ROOTED HERE</p>
@@ -1282,40 +1284,43 @@ function NotFound() {
 }
 function PageEffects() {
   const location = useLocation();
+  const navigate = useNavigate();
   const previousPath = useRef(location.pathname);
   useEffect(() => {
+    const legacyHashes = { "#about": "/about", "#blog": "/insights", "#serv": "/#services", "#projects": "/#local-work" };
+    if (location.pathname === "/" && legacyHashes[location.hash]) {
+      navigate(legacyHashes[location.hash], { replace: true });
+      return;
+    }
     if (previousPath.current !== location.pathname) {
       document.getElementById("main")?.focus({ preventScroll: true });
       previousPath.current = location.pathname;
     }
-    const slug = location.pathname.split("/").filter(Boolean).at(-1);
-    const item = [...services, ...waterSystems, ...articles].find(
-      (x) => x.slug === slug,
-    );
-    const titles = {
-      about: "About Williams",
-      contact: "Get in touch",
-      insights: "Good to know",
-      "new-request": "Request service",
-    };
-    document.title =
-      location.pathname === "/"
-        ? "Williams Solutions.Pro — Built for life up north."
-        : `${item?.title || titles[slug] || "Page not found"} | Williams Solutions.Pro`;
+    const metadata = getPageMetadata(location.pathname);
+    document.title = metadata.title;
     document
       .querySelector('meta[name="description"]')
       ?.setAttribute(
         "content",
-        item?.intro ||
-          item?.summary ||
-          "Williams Solutions.Pro: plumbing, wells, septic, water treatment, excavation, logging, and snow removal in Northern Ontario.",
+        metadata.description,
       );
+    document.querySelector('meta[name="robots"]')?.setAttribute("content",
+      import.meta.env.VITE_SITE_INDEXABLE && metadata.found ? "index, follow" : "noindex, nofollow");
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (metadata.canonical) {
+      if (!canonical) {
+        canonical = document.createElement("link");
+        canonical.rel = "canonical";
+        document.head.append(canonical);
+      }
+      canonical.href = metadata.canonical;
+    } else canonical?.remove();
     if (location.hash)
       requestAnimationFrame(() =>
         document.getElementById(location.hash.slice(1))?.scrollIntoView(),
       );
     else window.scrollTo({ top: 0, behavior: "instant" });
-  }, [location]);
+  }, [location, navigate]);
   return null;
 }
 function LegacyArticle({ slug }) {

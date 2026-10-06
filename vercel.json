@@ -2,17 +2,44 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "rewrites": [
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
     {
-      "source": "/((?!assets/|images/|robots.txt).*)",
-      "destination": "/index.html"
+      "source": "/2021/02/06/top-10-plumbing-tips-every-homeowner-should-know",
+      "destination": "/insights/top-10-plumbing-tips-every-homeowner-should-know",
+      "permanent": true
+    },
+    {
+      "source": "/2025/04/07/the-benefits-of-uv-water-treatmenta-comprehensive-guide",
+      "destination": "/insights/the-benefits-of-uv-water-treatmenta-comprehensive-guide",
+      "permanent": true
+    },
+    {
+      "source": "/2025/04/07/understanding-septic-systems-a-beginners-guide",
+      "destination": "/insights/understanding-septic-systems-a-beginners-guide",
+      "permanent": true
+    },
+    {
+      "source": "/author/:slug",
+      "destination": "/insights",
+      "permanent": true
+    },
+    {
+      "source": "/category/:slug",
+      "destination": "/insights",
+      "permanent": true
+    },
+    {
+      "source": "/blog",
+      "destination": "/insights",
+      "permanent": true
     }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
       ]

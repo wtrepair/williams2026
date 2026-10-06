@@ -1,8 +1,10 @@
-# Williams Solutions.Pro — Vercel preview
+# Williams Solutions.Pro
 
-Preview: https://williams-solutions-preview.vercel.app/
+Production: https://williamssolutions.pro/
 
-Independent React + Vite redesign, built alongside the existing Williams WordPress/Divi site. **Never deploy this project over `williams-wp`, modify its custom domains, or run the legacy static-promotion script.**
+Vercel project alias: https://williams-solutions-preview.vercel.app/
+
+Independent React + Vite website. The owner authorized launch on October 6, 2026. The original WordPress/Divi export remains in the separate `WilliamsWP` repository and `williams-wp` Vercel project for rollback. Do not overwrite that project or run its legacy static-promotion script. See `docs/production-launch.md` for domain and rollback details.
 
 ## Run locally
 
@@ -24,16 +26,18 @@ npm run test:browser
 
 Set `BASE_URL` to verify a deployment instead. Screenshots and temporary results belong in ignored `.cache/`.
 
-## Preview deployment
+## Deployment
 
-Vercel team: `paul-peanuts-projects`. **New project:** `williams-solutions-preview`. Production site `williams-wp` remains separate.
+Vercel team: `paul-peanuts-projects`. Project: `williams-solutions-preview` (the existing project name is retained). Production domains: `williamssolutions.pro` and `www.williamssolutions.pro`, with www redirecting to the apex.
 
 ```sh
 npx vercel link --yes --scope paul-peanuts-projects --project williams-solutions-preview
 npx vercel deploy --yes --target preview --scope paul-peanuts-projects
+# Release an approved build to the real domain:
+npx vercel deploy --yes --prod --scope paul-peanuts-projects
 ```
 
-This preview sends `X-Robots-Tag: noindex, nofollow` and blocks crawlers in `robots.txt`. No custom domain is assigned. Contact offers three direct links: the owner's updated number, 705-544-0200; the existing email address; and `/new-request/`. Every service/request CTA opens `/new-request/`, which embeds the same Jobber form as the existing site. The original standalone Jobber link remains available if embedding is blocked. No new mail backend or test submissions were added.
+Production builds (`VERCEL_ENV=production`) publish route-specific HTML metadata, canonical URLs, robots.txt and sitemap.xml. Preview builds retain noindex metadata and disallow crawling; the project alias follows the current production deployment. For a local production build, use `SITE_ENV=production npm run build`. Vercel serves generated route files with clean URLs; unknown paths return HTTP 404. Dated article and archive URLs redirect permanently. Contact offers three direct links: the owner's updated number, 705-544-0200; the existing email address; and `/new-request/`. Every service/request CTA opens `/new-request/`, which embeds the same Jobber form as the existing site. The original standalone Jobber link remains available if embedding is blocked. No new mail backend or test submissions were added.
 
 ## Content
 
@@ -53,3 +57,11 @@ The service layouts pair four capabilities in two columns, with specific origina
 `src/components/RequestPage.jsx` embeds Williams’ verified Jobber form `2248311` in hub `c6ab68fa-74c2-4d46-9066-ff2210b88264`. This is the iframe observed on the live `/new-request/` page on October 6, 2026. Form fields, uploads, consent and submission stay inside Jobber. Frame height messages are accepted only from that iframe and Jobber origin; the message listener is removed on unmount. `contact.requestPath`, `requestEmbedUrl`, and `requestUrl` centralize the website route, inline form, and direct fallback.
 
 Run `node scripts/verify-requests.mjs` for CTA routing, frame sizing, fallback and lifecycle checks. It mocks the external iframe and never submits a request; verify the real form separately in a normal browser because Jobber may challenge automated/headless sessions.
+
+## Production verification
+
+```sh
+BASE_URL=https://williamssolutions.pro node scripts/verify-production.mjs
+```
+
+This read-only audit covers core pages on desktop/mobile, HTTP status, canonical metadata, indexing, redirects, the preserved PDF, contact links and the form embed targets. Check the original Jobber form visually in a normal browser without submitting a test request.
