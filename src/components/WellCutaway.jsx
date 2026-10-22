@@ -7,7 +7,7 @@ export default function WellCutaway({ className = "" }) {
 
   return (
     <svg
-      className={className}
+      className={`well-cutaway ${className}`.trim()}
       viewBox="0 0 500 650"
       role="img"
       aria-labelledby={id("title")}
@@ -15,7 +15,6 @@ export default function WellCutaway({ className = "" }) {
         display: "block",
         width: "100%",
         height: "100%",
-        background: "#e1eaf0",
       }}
     >
       <title id={id("title")}>

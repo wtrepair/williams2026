@@ -665,7 +665,7 @@ p {
   position: relative;
   height: 670px;
   overflow: hidden;
-  background: #718178;
+  background: transparent;
 }
 .feature-image > img {
   width: 100%;
@@ -956,6 +956,10 @@ footer {
   margin-bottom: 22px;
   color: #f5f5ef;
 }
+.brand-footer small {
+  /* Align the visible S with the W's inset, rather than their text boxes. */
+  padding-inline-start: 0.05em;
+}
 .footer-main p {
   font-size: 12px;
   color: #859aa5;
@@ -1064,6 +1068,9 @@ footer {
   height: 100%;
   width: 100%;
   object-fit: cover;
+}
+.detail-image > .well-cutaway {
+  background: #e1eaf0;
 }
 .detail-image-caption {
   position: absolute;

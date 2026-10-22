@@ -57,6 +57,7 @@ import {
   seasonalPromotions,
 } from "./seasonal";
 import WellCutaway from "./components/WellCutaway";
+import WellIcon from "./components/WellIcon";
 import ServiceFAQ from "./components/ServiceFAQ";
 import RequestPage from "./components/RequestPage";
 import { servicePresentation, waterVisuals } from "./presentation";
@@ -69,7 +70,7 @@ const icons = {
   plumbing: Wrench,
   septic: Waves,
   "water-treatment": Droplets,
-  wells: Droplets,
+  wells: WellIcon,
   "excavation-aggregate": Mountain,
   logging: Trees,
   "snow-removal": Snowflake,
