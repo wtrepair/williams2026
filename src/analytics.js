@@ -1,4 +1,5 @@
 const measurementId = 'G-50WTYZKKJR';
+const metaPixelId = '879378588530915';
 let lastPath = '';
 
 function initialize() {
@@ -14,6 +15,25 @@ function initialize() {
   return true;
 }
 
+function initializeMeta() {
+  if (window.fbq) return;
+  const pixel = function (...args) {
+    if (pixel.callMethod) pixel.callMethod(...args);
+    else pixel.queue.push(args);
+  };
+  pixel.push = pixel;
+  pixel.loaded = true;
+  pixel.version = '2.0';
+  pixel.queue = [];
+  window.fbq = pixel;
+  window._fbq = pixel;
+  const script = document.createElement('script');
+  script.async = true;
+  script.src = 'https://connect.facebook.net/en_US/fbevents.js';
+  document.head.appendChild(script);
+  pixel('init', metaPixelId);
+}
+
 export function trackPage(path, title) {
   if (!initialize() || lastPath === path) return;
   lastPath = path;
@@ -22,6 +42,8 @@ export function trackPage(path, title) {
   const page = { page_title: title, page_location: window.location.origin + path, page_referrer: referrer };
   window.gtag('config', measurementId, { ...page, send_page_view: false });
   window.gtag('event', 'page_view', page);
+  initializeMeta();
+  window.fbq('track', 'PageView');
   if (path.replace(/\/$/, '') === '/new-request') window.gtag('event', 'request_form_view');
 }
 

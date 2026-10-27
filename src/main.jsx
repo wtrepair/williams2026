@@ -278,7 +278,7 @@ function Footer() {
       </div>
       <div className="footer-bottom wrap">
         <span>© {new Date().getFullYear()} Williams Solutions.Pro</span>
-        <span>We use Google Analytics to understand website use. <a href="https://policies.google.com/technologies/partner-sites">How Google uses data</a></span>
+        <span>We use Google Analytics and Meta Pixel to understand website use and improve our marketing. <a href="https://policies.google.com/technologies/partner-sites">How Google uses data</a> · <a href="https://www.facebook.com/privacy/policy/">Meta privacy policy</a></span>
         <span>
           Made for the North.{" "}
           <a href="https://kisstech.ca" target="_blank" rel="noreferrer">
