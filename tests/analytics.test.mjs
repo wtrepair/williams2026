@@ -12,7 +12,7 @@ test('counts distinct public page views and contact clicks without URL queries',
   trackContact('phone_click');
   const events = window.dataLayer.map(args => Array.from(args));
   assert.equal(appended.length, 2);
-  assert.deepEqual(window.fbq.queue.filter(e => e[1] === 'PageView'), [['track', 'PageView'], ['track', 'PageView']]);
+  assert.deepEqual(window.fbq.queue.map(e => Array.from(e)).filter(e => e[1] === 'PageView'), [['track', 'PageView'], ['track', 'PageView']]);
   assert.equal(events.filter(e => e[1] === 'page_view').length, 2);
   assert.equal(events.filter(e => e[1] === 'request_form_view').length, 1);
   assert.equal(events.filter(e => e[1] === 'phone_click').length, 1);

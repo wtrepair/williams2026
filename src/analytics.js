@@ -17,9 +17,9 @@ function initialize() {
 
 function initializeMeta() {
   if (window.fbq) return;
-  const pixel = function (...args) {
-    if (pixel.callMethod) pixel.callMethod(...args);
-    else pixel.queue.push(args);
+  const pixel = function () {
+    if (pixel.callMethod) pixel.callMethod.apply(pixel, arguments);
+    else pixel.queue.push(arguments);
   };
   pixel.push = pixel;
   pixel.loaded = true;
