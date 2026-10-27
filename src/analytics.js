@@ -43,7 +43,20 @@ export function trackPage(path, title) {
   window.gtag('config', measurementId, { ...page, send_page_view: false });
   window.gtag('event', 'page_view', page);
   initializeMeta();
-  window.fbq('track', 'PageView');
+  const eventId = window.crypto?.randomUUID?.();
+  if (eventId) {
+    window.fbq('track', 'PageView', {}, { eventID: eventId });
+    const cookies = Object.fromEntries((document.cookie || '').split('; ').map(item => {
+      const i = item.indexOf('=');
+      return i < 0 ? [item, ''] : [item.slice(0, i), item.slice(i + 1)];
+    }));
+    fetch('/api/meta-pageview', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, keepalive: true,
+      body: JSON.stringify({ eventId, path, fbp: cookies._fbp, fbc: cookies._fbc }),
+    }).catch(() => {});
+  } else {
+    window.fbq('track', 'PageView');
+  }
   if (path.replace(/\/$/, '') === '/new-request') window.gtag('event', 'request_form_view');
 }
 
