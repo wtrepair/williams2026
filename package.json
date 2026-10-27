@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "vite build",
+    "build": "vite build && node build-render.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "test:browser": "node scripts/verify-browser.mjs"
   },

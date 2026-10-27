@@ -62,6 +62,7 @@ import ServiceFAQ from "./components/ServiceFAQ";
 import RequestPage from "./components/RequestPage";
 import { servicePresentation, waterVisuals } from "./presentation";
 import { getPageMetadata } from "./site";
+import { trackPage, trackContact } from "./analytics";
 import "./styles.css";
 import "./editorial.css";
 
@@ -277,6 +278,7 @@ function Footer() {
       </div>
       <div className="footer-bottom wrap">
         <span>© {new Date().getFullYear()} Williams Solutions.Pro</span>
+        <span>We use Google Analytics to understand website use. <a href="https://policies.google.com/technologies/partner-sites">How Google uses data</a></span>
         <span>
           Made for the North.{" "}
           <a href="https://kisstech.ca" target="_blank" rel="noreferrer">
@@ -333,7 +335,7 @@ function Home() {
   const [today, setToday] = useState(() => new Date());
   const [season, setSeason] = useState(() => getCalendarSeason());
   const [automatic, setAutomatic] = useState(
-    () => !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => typeof window !== "undefined" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   );
   const heroRef = useRef(null);
   const promotion = getSeasonalPromotion(today);
@@ -1288,6 +1290,16 @@ function PageEffects() {
   const navigate = useNavigate();
   const previousPath = useRef(location.pathname);
   useEffect(() => {
+    const onClick = (event) => {
+      const link = event.target instanceof Element ? event.target.closest('a[href]') : null;
+      const href = link?.getAttribute('href') || '';
+      if (href.startsWith('tel:')) trackContact('phone_click');
+      else if (href.startsWith('mailto:')) trackContact('email_click');
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, []);
+  useEffect(() => {
     const legacyHashes = { "#about": "/about", "#blog": "/insights", "#serv": "/#services", "#projects": "/#local-work" };
     if (location.pathname === "/" && legacyHashes[location.hash]) {
       navigate(legacyHashes[location.hash], { replace: true });
@@ -1299,6 +1311,7 @@ function PageEffects() {
     }
     const metadata = getPageMetadata(location.pathname);
     document.title = metadata.title;
+    if (metadata.found) trackPage(location.pathname, metadata.title);
     document
       .querySelector('meta[name="description"]')
       ?.setAttribute(
@@ -1331,9 +1344,9 @@ function LegacyArticle({ slug }) {
     ) || articles[0];
   return <Navigate to={`/insights/${a.slug}`} replace />;
 }
-function App() {
+export function AppContent() {
   return (
-    <BrowserRouter>
+    <>
       <PageEffects />
       <Header />
       <main id="main" tabIndex="-1">
@@ -1366,12 +1379,12 @@ function App() {
         </Routes>
       </main>
       <Footer />
-    </BrowserRouter>
+    </>
   );
 }
 
-createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);
+if (typeof document !== "undefined") {
+  createRoot(document.getElementById("root")).render(
+    <React.StrictMode><BrowserRouter><AppContent /></BrowserRouter></React.StrictMode>,
+  );
+}
