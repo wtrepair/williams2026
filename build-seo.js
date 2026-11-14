@@ -23,7 +23,11 @@ export function buildSeo(indexable) {
           .replace(/<title>[\s\S]*?<\/title>/, `<title>${escape(metadata.title)}</title>`)
           .replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/>/, `<meta name="description" content="${escape(metadata.description)}" />`)
           .replace(/<meta\s+name="robots"\s+content="[^"]*"\s*\/>/, `<meta name="robots" content="${robots}" />`);
-        if (metadata.canonical) html = html.replace("</head>", `    <link rel="canonical" href="${escape(metadata.canonical)}" />\n  </head>`);
+        if (metadata.canonical) {
+          const business = { '@context': 'https://schema.org', '@type': 'HomeAndConstructionBusiness', name: 'Williams Solutions.Pro', url: siteOrigin, telephone: '+1-705-544-0200', areaServed: { '@type': 'Place', name: 'Kirkland Lake to Temiskaming Shores, Ontario' }, image: `${siteOrigin}/images/logo.png` };
+          const social = `<link rel="canonical" href="${escape(metadata.canonical)}" />\n    <meta property="og:type" content="website" />\n    <meta property="og:title" content="${escape(metadata.title)}" />\n    <meta property="og:description" content="${escape(metadata.description)}" />\n    <meta property="og:url" content="${escape(metadata.canonical)}" />\n    <meta property="og:image" content="${siteOrigin}/images/logo.png" />\n    <meta name="twitter:card" content="summary" />\n    <script type="application/ld+json">${JSON.stringify(business).replaceAll('<', '\\u003c')}</script>`;
+          html = html.replace("</head>", `    ${social}\n  </head>`);
+        }
         const filename = resolve(outputDirectory, path === "/" ? "index.html" : `${path.slice(1)}.html`);
         await mkdir(dirname(filename), { recursive: true });
         await writeFile(filename, html);

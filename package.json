@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
-    "build": "vite build",
+    "build": "vite build && node build-render.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "test:browser": "node scripts/verify-browser.mjs"
   },
@@ -19,8 +19,8 @@
     "three": "^0.186.0"
   },
   "devDependencies": {
-    "@playwright/test": "^1.58.2",
     "@vitejs/plugin-react": "^6.0.1",
-    "vite": "^8.3.8"
+    "@playwright/test": "^1.58.2",
+    "vite": "^8.3.0"
   }
 }
